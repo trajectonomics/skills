@@ -78,11 +78,11 @@ installed_in() {
 
 # The one rule the check exists for: the onboarding Skill and nothing else, in each directory the
 # two agent targets write to. An exact match also catches a vendored Skill following it in.
-for agents in ".agents/skills" ".claude/skills"; do
-	found="$(installed_in "$SCRATCH/project/$agents")"
+for skill_dir in ".agents/skills" ".claude/skills"; do
+	found="$(installed_in "$SCRATCH/project/$skill_dir")"
 	if [ "$found" != "$SKILL" ]; then
 		cat "$SCRATCH/add.log" >&2
-		fail "$agents holds '$(echo "$found" | tr '\n' ' ')', expected exactly '$SKILL'"
+		fail "$skill_dir holds '$(echo "$found" | tr '\n' ' ')', expected exactly '$SKILL'"
 	fi
 done
 

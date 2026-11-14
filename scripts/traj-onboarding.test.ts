@@ -98,14 +98,18 @@ describe("the published Skill set", () => {
 		expect(Object.keys(lock.skills ?? {})).not.toContain("traj-onboarding")
 	})
 
-	it("keeps traj-onboarding out of the vendored agent Skill trees", () => {
-		expect(existsSync(new URL(".agents/skills/traj-onboarding", repoRoot))).toBe(false)
-	})
+	it.each([".agents/skills", ".claude/skills", ".vibe/skills"])(
+		"keeps traj-onboarding out of %s, which holds vendored Skills only",
+		(vendoredTree) => {
+			expect(existsSync(new URL(`${vendoredTree}/traj-onboarding`, repoRoot))).toBe(false)
+		},
+	)
 
 	it("ships a pinned, bounded install check that stays out of bun run check", () => {
 		const script = read(INSTALL_CHECK)
+		// The script is the one place the pin is written; the README states that pin's Node floor.
 		const pinned: string | undefined = /^SKILLS_CLI="(skills@\d+\.\d+\.\d+)"/m.exec(script)?.[1]
-		expect(pinned).toBe("skills@1.7.6")
+		expect(pinned).toMatch(/^skills@\d+\.\d+\.\d+$/)
 		expect(read("README.md")).toContain(pinned ?? "")
 		expect(script).toContain("mktemp -d")
 		expect(script).toContain(".cache")

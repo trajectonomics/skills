@@ -66,6 +66,8 @@ Skills come from [`mattpocock/skills`](https://github.com/mattpocock/skills) and
   ```
 - Restore from the lock: `npx skills experimental_install`
 
+A Skill under the repository-root `skills/` directory is first-party and hand-edited. Do not add it to `skills-lock.json` and do not copy it into `.agents/skills/`. The skills CLI hides a Skill whose name is already in that lock, so a lock entry there makes `npx skills add trajectonomics/skills --skill <name>` unable to install it. Do not run that install command inside this repository.
+
 ## Repository Information
 
 - Repository: https://github.com/trajectonomics/skills

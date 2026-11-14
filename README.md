@@ -9,13 +9,27 @@ Part of the [Trajectonomics](https://github.com/trajectonomics) ecosystem.
 
 ---
 
-## Installation
+## Install
+
+Install the onboarding skill, then let your agent set you up:
+
+```bash
+npx skills add trajectonomics/skills --skill traj-onboarding
+```
+
+The `skills` CLI version this skill is checked against, `skills@1.7.6`, needs Node 22.20 or later.
+The `traj` command line the skill installs needs Node 20 or later.
+
+---
+
+## Development
+
+`@trajectonomics/skills` is this repository's private npm package: visitors install the skill above,
+not this package.
 
 ```bash
 bun add @trajectonomics/skills
 ```
-
-## Getting Started
 
 ```typescript
 import { createEntity } from "@trajectonomics/skills"
@@ -24,9 +38,7 @@ const entity = createEntity({ id: "1", label: "Example" })
 console.log(entity)
 ```
 
----
-
-## Development
+Working in this repository:
 
 ```bash
 # Install dependencies

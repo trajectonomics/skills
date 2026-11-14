@@ -19,8 +19,9 @@ Run both checks first, so a machine that is half set up only gets the half it is
   on stderr, and a download line is not an error.
 - **Scope and operating skill**: `npx skills list --json` and `npx skills list -g --json`. A project
   list that names `traj-onboarding` is this session's copy; when it does not, a global list that does
-  is, and step 2 installs into that same scope. A skill named `traj` whose `source` is
-  `trajectonomics/internal-skills` is the operating skill, and its `path` is where you read it.
+  is, and step 2 installs into that same scope. Read the operating skill out of that one scope's list:
+  a skill named `traj` whose `source` is `trajectonomics/internal-skills` is the operating skill, and
+  its `path` is where you read it. A `traj` in the other scope belongs to another setup.
 
 When both pass and the step 3 question is answered, setup is done: this skill stops, and every later
 conversation about their money is the operating skill's.
@@ -61,8 +62,8 @@ npx skills add trajectonomics/internal-skills --skill traj -y
 That command adds only `traj`, and takes no agent filter, so the skills CLI installs for the agents
 it detects. The person never opens that repository.
 
-Done when `npx skills list --json` (or `-g`) names `traj` whose `source` is
-`trajectonomics/internal-skills`, and you hold the `path` it reports.
+Done when that same scope's list names `traj` whose `source` is `trajectonomics/internal-skills`, and
+you hold the `path` it reports.
 
 ## Step 3: Ask once, then hand over
 

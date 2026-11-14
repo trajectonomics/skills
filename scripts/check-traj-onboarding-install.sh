@@ -29,12 +29,12 @@ fail() {
 # A download that hangs must not hold a Factory Claim open, so a missing bound is a failure rather
 # than a warning. `timeout` is GNU/coreutils; macOS only has it through `gtimeout`.
 bounded() {
-	local limit="$1"
+	local limit_seconds="$1"
 	shift
 	if command -v timeout >/dev/null 2>&1; then
-		timeout "$limit" "$@"
+		timeout "$limit_seconds" "$@"
 	elif command -v gtimeout >/dev/null 2>&1; then
-		gtimeout "$limit" "$@"
+		gtimeout "$limit_seconds" "$@"
 	else
 		fail "no timeout(1) or gtimeout(1) on PATH, and this check never runs unbounded (macOS: brew install coreutils)"
 	fi

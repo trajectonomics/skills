@@ -17,10 +17,10 @@ Run both checks first, so a machine that is half set up only gets the half it is
   that prints is the command line. When the machine has neither, that first run of the scoped package
   fetches the binary once and caches it, so this check is also the install; it narrates the download
   on stderr, and a download line is not an error.
-- **Scope and operating skill**: `npx skills list --json` and `npx skills list -g --json`. The list
-  that names `traj-onboarding` is this skill's scope, and step 2 installs into that one. A skill named
-  `traj` whose `source` is `trajectonomics/internal-skills` is the operating skill, and its `path` is
-  where you read it.
+- **Scope and operating skill**: `npx skills list --json` and `npx skills list -g --json`. A project
+  list that names `traj-onboarding` is this session's copy; when it does not, a global list that does
+  is, and step 2 installs into that same scope. A skill named `traj` whose `source` is
+  `trajectonomics/internal-skills` is the operating skill, and its `path` is where you read it.
 
 When both pass and the step 3 question is answered, setup is done: this skill stops, and every later
 conversation about their money is the operating skill's.
@@ -50,8 +50,9 @@ Done when a version prints.
 
 ## Step 2: Install the skill that operates `traj`
 
-Install it in the scope the list reported for `traj-onboarding`: add `-g` for the global list, and no
-flag for the project list.
+Install it in this skill's scope: add `-g` when the project list did not name `traj-onboarding` and
+the global list did, and no flag otherwise, because the project copy is the one a session in a
+project loads.
 
 ```bash
 npx skills add trajectonomics/internal-skills --skill traj -y
@@ -60,7 +61,8 @@ npx skills add trajectonomics/internal-skills --skill traj -y
 That command adds only `traj`, and takes no agent filter, so the skills CLI installs for the agents
 it detects. The person never opens that repository.
 
-Done when `npx skills list --json` (or `-g`) names `traj`, and you hold the `path` it reports.
+Done when `npx skills list --json` (or `-g`) names `traj` whose `source` is
+`trajectonomics/internal-skills`, and you hold the `path` it reports.
 
 ## Step 3: Ask once, then hand over
 
@@ -73,8 +75,7 @@ never needed again.
 
 - Every number you give them is one `traj` returned. The tool owns balances, projections and dates;
   the person owns the facts that feed them.
-- This skill states no tax meaning. Tax is the operating skill's to explain, and every `traj` result
-  says whether tax is applied.
+- This skill states no tax meaning. Tax is the operating skill's to explain.
 - Commands, flags and document shapes come from `traj schema`, not from this document, because the
   command surface changes as features land.
 

@@ -57,7 +57,7 @@ describe("the traj-onboarding Skill", () => {
 	it("installs the operating Skill from internal-skills in this Skill's own scope", () => {
 		expect(body).toContain(OPERATING_SKILL_COMMAND)
 		expect(body).toContain("skills list --json")
-		expect(body).toContain("add `-g` for the global list")
+		expect(body).toContain("add `-g` when the project list did not name `traj-onboarding`")
 	})
 
 	it("runs the scoped command line package and points PATH installs at the CLI repository", () => {

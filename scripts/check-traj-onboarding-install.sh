@@ -14,7 +14,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SOURCE="${1:-$REPO_ROOT}"
 SKILL="traj-onboarding"
 SKILLS_CLI="skills@1.7.6"
-AGENTS="claude-code codex"
+AGENTS=(claude-code codex)
 CACHE_ROOT="${XDG_CACHE_HOME:-$HOME/.cache}"
 
 mkdir -p "$CACHE_ROOT"
@@ -64,7 +64,7 @@ mkdir -p "$SCRATCH/project"
 (
 	cd "$SCRATCH/project"
 	git init -q
-	bounded 600 npx -y "$SKILLS_CLI" add "$SOURCE" --skill "$SKILL" -a $AGENTS -y \
+	bounded 600 npx -y "$SKILLS_CLI" add "$SOURCE" --skill "$SKILL" -a "${AGENTS[@]}" -y \
 		>"$SCRATCH/add.log" 2>&1
 ) || {
 	cat "$SCRATCH/add.log" >&2

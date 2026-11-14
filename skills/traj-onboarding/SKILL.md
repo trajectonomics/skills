@@ -14,15 +14,21 @@ done, and setup is finished when all three pass.
 Run both checks first, so a machine that is half set up only gets the half it is missing.
 
 - **Command line**: `traj --version`, then `npx -y @trajectonomics/cli@latest --version`. A version
-  that prints is the command line.
-- **Operating skill**: `npx skills list --json`, and `npx skills list -g --json` when this skill was
-  installed globally. A skill named `traj` whose `source` is `trajectonomics/internal-skills` is the
-  operating skill, and its `path` is where you read it.
+  that prints is the command line. When the machine has neither, that first run of the scoped package
+  fetches the binary once and caches it, so this check is also the install; it narrates the download
+  on stderr, and a download line is not an error.
+- **Scope and operating skill**: `npx skills list --json` and `npx skills list -g --json`. The list
+  that names `traj-onboarding` is this skill's scope, and step 2 installs into that one. A skill named
+  `traj` whose `source` is `trajectonomics/internal-skills` is the operating skill, and its `path` is
+  where you read it.
 
 When both pass and the step 3 question is answered, setup is done: this skill stops, and every later
 conversation about their money is the operating skill's.
 
 ## Step 1: Install the command line
+
+`traj --version` printing a version is the whole of this step, and the check above already runs the
+fallback that prints one. Later calls reuse the cached binary, so nothing downloads twice.
 
 The npm package is `@trajectonomics/cli`. Run it under that scoped name, with the arguments the
 person's request needs:
@@ -32,9 +38,8 @@ npx -y @trajectonomics/cli@latest
 bunx @trajectonomics/cli@latest
 ```
 
-The first run fetches a binary of about 100 MB and narrates it on stderr; a download line is not a
-failure. The command line needs Node 20 or later. The unscoped `traj` on npm is a different,
-unrelated package.
+The command line needs Node 20 or later. The unscoped `traj` on npm is a different, unrelated
+package.
 
 **On PATH.** When the person wants to type `traj` on its own, read the Install section of
 https://github.com/trajectonomics/cli, give them the one-line command for their platform, and let
@@ -45,8 +50,8 @@ Done when a version prints.
 
 ## Step 2: Install the skill that operates `traj`
 
-Install it in this skill's own scope: add `-g` when `npx skills list -g --json` reported
-`traj-onboarding`, and no flag when the project list reported it.
+Install it in the scope the list reported for `traj-onboarding`: add `-g` for the global list, and no
+flag for the project list.
 
 ```bash
 npx skills add trajectonomics/internal-skills --skill traj -y

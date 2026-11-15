@@ -34,6 +34,20 @@ describe("the install check", () => {
 		expect(output).toContain(`expected ${SKILL_VERSION}`)
 	})
 
+	it("reads the version from the metadata block, not another nested version: line", () => {
+		const skill = [
+			"---",
+			"name: traj-onboarding",
+			"other:",
+			'  version: "9.9.9"',
+			"metadata:",
+			`  version: "${SKILL_VERSION}"`,
+			"---",
+			"",
+		].join("\n")
+		expect(runInstallCheck({ skill }).exitCode).toBe(0)
+	})
+
 	it("runs the CLI version the README states the Node floor for", () => {
 		const pin =
 			runInstallCheck()

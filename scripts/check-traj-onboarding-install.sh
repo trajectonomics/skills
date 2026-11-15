@@ -96,9 +96,11 @@ done
 installed_version="$(
 	awk '
 		/^---$/ { if (frontmatter) exit; frontmatter = 1; next }
+		frontmatter && /^[^[:space:]]/ { metadata = 0 }
 		frontmatter && /^metadata:[[:space:]]*$/ { metadata = 1; next }
 		metadata && /^[[:space:]]+version:[[:space:]]*/ {
 			sub(/^[[:space:]]+version:[[:space:]]*/, "")
+			sub(/[[:space:]]+$/, "")
 			gsub(/^"|"$/, "")
 			print
 			exit

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Proves that the command the website shows installs the onboarding Skill and nothing else from
-# this repository.
+# this repository, and that the installed copy keeps the `metadata.version` the Site names.
 #
 #   bash scripts/check-traj-onboarding-install.sh                       # this checkout
 #   bash scripts/check-traj-onboarding-install.sh trajectonomics/skills # once it is on the default branch
@@ -13,6 +13,7 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SOURCE="${1:-$REPO_ROOT}"
 SKILL="traj-onboarding"
+SKILL_VERSION="0.1.0"
 SKILLS_CLI="skills@1.7.6"
 AGENTS=(claude-code codex)
 CACHE_ROOT="${XDG_CACHE_HOME:-$HOME/.cache}"
@@ -88,6 +89,26 @@ done
 
 [ -f "$SCRATCH/project/.agents/skills/$SKILL/SKILL.md" ] ||
 	fail "$SKILL/SKILL.md was not installed"
+
+# The Site announces `metadata.version` as the stable marker, so an install that drops the frontmatter
+# field would make the claim false. Read it out of the installed copy's metadata block, never the
+# source.
+installed_version="$(
+	awk '
+		/^---$/ { if (frontmatter) exit; frontmatter = 1; next }
+		frontmatter && /^[^[:space:]]/ { metadata = 0 }
+		frontmatter && /^metadata:[[:space:]]*$/ { metadata = 1; next }
+		metadata && /^[[:space:]]+version:[[:space:]]*/ {
+			sub(/^[[:space:]]+version:[[:space:]]*/, "")
+			sub(/[[:space:]]+$/, "")
+			gsub(/^"|"$/, "")
+			print
+			exit
+		}
+	' "$SCRATCH/project/.agents/skills/$SKILL/SKILL.md"
+)"
+[ "$installed_version" = "$SKILL_VERSION" ] ||
+	fail "the installed $SKILL/SKILL.md carries metadata.version '${installed_version}', expected $SKILL_VERSION (the Site names it as the stable marker)"
 
 echo "PASS: the website command installs exactly the $SKILL Skill, and no other Skill from this repository."
 echo "      Source: $SOURCE"

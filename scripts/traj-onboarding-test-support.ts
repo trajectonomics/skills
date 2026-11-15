@@ -21,8 +21,8 @@ export const SKILL_PATH = "skills/traj-onboarding/SKILL.md"
 /** The networked install check the stubbed runs stand in for. */
 export const INSTALL_CHECK = "scripts/check-traj-onboarding-install.sh"
 
-/** The stable version this repository tags, and the Site announces, for `traj-onboarding`. */
-export const RELEASE_VERSION = "0.1.0"
+/** The Skill's stable version: the repository tag, and the version the Site announces. */
+export const SKILL_VERSION = "0.1.0"
 
 /** One repository file as text. */
 export function read(relativePath: string): string {
@@ -49,10 +49,7 @@ export const STUB_NPX = [
 	"",
 ].join("\n")
 
-/**
- * Runs the install check against a stub `npx` that installs `skill` (this repository's own
- * `SKILL.md` by default), returning what it said and the CLI calls it made.
- */
+/** A stubbed install-check run: what the check said and the CLI calls the stub made. */
 export function runInstallCheck({ skill = read(SKILL_PATH) }: { skill?: string } = {}): {
 	exitCode: number
 	output: string

@@ -91,11 +91,13 @@ done
 	fail "$SKILL/SKILL.md was not installed"
 
 # The Site announces `metadata.version` as the stable marker, so an install that drops the frontmatter
-# field would make the claim false. Read the version out of the installed copy, never the source.
+# field would make the claim false. Read it out of the installed copy's metadata block, never the
+# source.
 installed_version="$(
 	awk '
 		/^---$/ { if (frontmatter) exit; frontmatter = 1; next }
-		frontmatter && /^[[:space:]]+version:[[:space:]]*/ {
+		frontmatter && /^metadata:[[:space:]]*$/ { metadata = 1; next }
+		metadata && /^[[:space:]]+version:[[:space:]]*/ {
 			sub(/^[[:space:]]+version:[[:space:]]*/, "")
 			gsub(/^"|"$/, "")
 			print

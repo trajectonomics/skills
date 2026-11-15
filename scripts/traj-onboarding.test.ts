@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test"
 import { existsSync } from "node:fs"
 import { join } from "node:path"
-import { RELEASE_VERSION, read, repoRoot, SKILL_PATH } from "./traj-onboarding-test-support"
+import { read, repoRoot, SKILL_PATH, SKILL_VERSION } from "./traj-onboarding-test-support"
 
 /**
  * Static checks on the first-party onboarding Skill and the README the website links to. The
@@ -53,7 +53,7 @@ describe("the traj-onboarding Skill", () => {
 	})
 
 	it("carries the stable release version in frontmatter metadata, which the Site announces", () => {
-		expect(block).toContain(`\nmetadata:\n  version: "${RELEASE_VERSION}"`)
+		expect(block).toContain(`\nmetadata:\n  version: "${SKILL_VERSION}"`)
 	})
 
 	it("installs the operating Skill from internal-skills in this Skill's own scope", () => {

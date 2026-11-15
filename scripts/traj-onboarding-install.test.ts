@@ -1,10 +1,10 @@
 import { describe, expect, it } from "bun:test"
 import {
 	INSTALL_CHECK,
-	RELEASE_VERSION,
 	read,
 	runInstallCheck,
 	SKILL_PATH,
+	SKILL_VERSION,
 } from "./traj-onboarding-test-support"
 
 /** `engines.node` of the skills CLI this repository pins; the README states it for visitors. */
@@ -21,17 +21,17 @@ describe("the install check", () => {
 		expect(cacheLeftovers).toEqual([])
 	})
 
-	it("states the release version once, in the check that the install keeps it", () => {
-		expect(read(INSTALL_CHECK)).toContain(`SKILL_VERSION="${RELEASE_VERSION}"`)
+	it("states the Skill's version once, in the check that the install keeps it", () => {
+		expect(read(INSTALL_CHECK)).toContain(`SKILL_VERSION="${SKILL_VERSION}"`)
 	})
 
 	it("fails when the installed SKILL.md loses the release version", () => {
-		const skill = read(SKILL_PATH).replace(`metadata:\n  version: "${RELEASE_VERSION}"\n`, "")
+		const skill = read(SKILL_PATH).replace(`metadata:\n  version: "${SKILL_VERSION}"\n`, "")
 		expect(skill).not.toBe(read(SKILL_PATH))
 		const { exitCode, output } = runInstallCheck({ skill })
 		expect(exitCode).not.toBe(0)
 		expect(output).toContain("metadata.version")
-		expect(output).toContain(`expected ${RELEASE_VERSION}`)
+		expect(output).toContain(`expected ${SKILL_VERSION}`)
 	})
 
 	it("runs the CLI version the README states the Node floor for", () => {

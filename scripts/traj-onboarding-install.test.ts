@@ -48,6 +48,33 @@ describe("the install check", () => {
 		expect(runInstallCheck({ skill }).exitCode).toBe(0)
 	})
 
+	it("fails when a later top-level key carries the version, not the metadata block", () => {
+		const skill = [
+			"---",
+			"name: traj-onboarding",
+			"metadata:",
+			"other:",
+			`  version: "${SKILL_VERSION}"`,
+			"---",
+			"",
+		].join("\n")
+		const { exitCode, output } = runInstallCheck({ skill })
+		expect(exitCode).not.toBe(0)
+		expect(output).toContain("metadata.version")
+	})
+
+	it("accepts the version line with trailing spaces", () => {
+		const skill = [
+			"---",
+			"name: traj-onboarding",
+			"metadata:",
+			`  version: "${SKILL_VERSION}"  `,
+			"---",
+			"",
+		].join("\n")
+		expect(runInstallCheck({ skill }).exitCode).toBe(0)
+	})
+
 	it("runs the CLI version the README states the Node floor for", () => {
 		const pin =
 			runInstallCheck()

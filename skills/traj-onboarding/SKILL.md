@@ -1,6 +1,8 @@
 ---
 name: traj-onboarding
 description: "Set up `traj`, the personal money command line, for someone starting out: install the command line, install the skill that operates it, and start from their financial situation and their goal. Use when someone wants to get started with their money, asks to install `traj`, or tells you their financial situation and their goal while setup is not done."
+metadata:
+  version: "0.1.0"
 ---
 
 # traj-onboarding

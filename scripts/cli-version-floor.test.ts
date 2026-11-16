@@ -3,10 +3,13 @@ import {
 	CLI_VERSION_FLOOR,
 	CLI_VERSION_FLOOR_PREFIX,
 	statedCliVersionFloor,
+	withoutCliVersionFloorLine,
 } from "./cli-version-floor"
 import { read, SKILL_PATH } from "./traj-onboarding-test-support"
 
 const skill = read(SKILL_PATH)
+/** The one line that states the floor, as the Skill writes it. */
+const FLOOR_LINE = `${CLI_VERSION_FLOOR_PREFIX}\`${CLI_VERSION_FLOOR}\``
 /** The sentence both rules that end setup must count. */
 const DISCLOSURE_COUNTED = "a below-floor command line has been disclosed"
 
@@ -34,6 +37,13 @@ describe("the CLI Version Floor the traj-onboarding Skill declares", () => {
 		expect(skill.split(CLI_VERSION_FLOOR)).toHaveLength(2)
 	})
 
+	it("reads no floor from a Skill that states none, and none from a marked line without one", () => {
+		expect(statedCliVersionFloor("# traj\n\nNo floor here.\n")).toBeNull()
+		expect(
+			statedCliVersionFloor(`${CLI_VERSION_FLOOR_PREFIX}yet to be decided\n${FLOOR_LINE}\n`),
+		).toBeNull()
+	})
+
 	it("states the comparison rule with its three traps", () => {
 		const stepOne = section(skill, "Step 1: Install the command line")
 		expect(stepOne).toContain("the first version that printed")
@@ -43,10 +53,11 @@ describe("the CLI Version Floor the traj-onboarding Skill declares", () => {
 		expect(stepOne).toContain("treat a pre-release as below its release")
 	})
 
-	it("counts the scoped package's version when the unscoped traj printed", () => {
+	it("compares the scoped package's version when the unscoped traj, or an unknown one, printed", () => {
 		const stepOne = section(skill, "Step 1: Install the command line")
-		expect(stepOne).toContain("the unscoped `traj` on npm, a different package")
-		expect(stepOne).toContain("the scoped package's version is the one that counts")
+		expect(stepOne).toContain("unscoped `traj` on npm is a different, unrelated package")
+		expect(stepOne).toContain("you cannot tell which package printed it")
+		expect(stepOne).toContain("compare the scoped package's version instead")
 	})
 
 	it("discloses an older command line in five facts, at the handover", () => {
@@ -75,12 +86,8 @@ describe("the CLI Version Floor the traj-onboarding Skill declares", () => {
 		expect(section(skill, "Step 3: Ask once, then hand over")).toContain(DISCLOSURE_COUNTED)
 	})
 
-	it("fails its own assertion when the Skill drops the floor line", () => {
-		const withoutFloor = skill
-			.split(/\r?\n/)
-			.filter((line) => !line.startsWith(CLI_VERSION_FLOOR_PREFIX))
-			.join("\n")
-		expect(withoutFloor).not.toBe(skill)
+	it("cannot pass the static assertion once the Skill drops the floor sentence", () => {
+		const withoutFloor = withoutCliVersionFloorLine(skill)
 		expect(() => pinnedFloor(withoutFloor)).toThrow(CLI_VERSION_FLOOR)
 	})
 })

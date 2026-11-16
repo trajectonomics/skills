@@ -3,6 +3,7 @@ import {
 	CLI_VERSION_FLOOR,
 	CLI_VERSION_FLOOR_PREFIX,
 	statedCliVersionFloor,
+	withoutCliVersionFloorLine,
 } from "./cli-version-floor"
 import {
 	INSTALL_CHECK,
@@ -17,15 +18,6 @@ const SKILLS_CLI_NODE_FLOOR = "22.20"
 
 /** The one line that states the floor, as the Skill and a stale installed copy write it. */
 const FLOOR_LINE = `${CLI_VERSION_FLOOR_PREFIX}\`${CLI_VERSION_FLOOR}\``
-
-/** The Skill's source with its floor line removed, the way a stale installed copy arrives. */
-function withoutFloorLine(source: string): string {
-	const lines = source.split(/\r?\n/)
-	const kept = lines.filter((line) => !line.startsWith(CLI_VERSION_FLOOR_PREFIX))
-	if (kept.length !== lines.length - 1)
-		throw new Error(`the Skill has no '${CLI_VERSION_FLOOR_PREFIX}' line`)
-	return kept.join("\n")
-}
 
 describe("the install check", () => {
 	it("lists with the pinned CLI, then installs exactly this Skill for two agents", () => {
@@ -43,12 +35,15 @@ describe("the install check", () => {
 	})
 
 	it("pins the CLI version floor beside that version, at the floor the Skill states", () => {
-		expect(read(INSTALL_CHECK)).toContain(`CLI_VERSION_FLOOR="${CLI_VERSION_FLOOR}"`)
+		const check = read(INSTALL_CHECK)
+		expect(check).toContain(`CLI_VERSION_FLOOR="${CLI_VERSION_FLOOR}"`)
+		expect(check).toContain(`CLI_VERSION_FLOOR_PREFIX='${CLI_VERSION_FLOOR_PREFIX}'`)
 		expect(statedCliVersionFloor(read(SKILL_PATH))).toBe(CLI_VERSION_FLOOR)
 	})
 
 	it("fails when the installed copy drops the floor sentence, naming both numbers", () => {
-		const { exitCode, output } = runInstallCheck({ skill: withoutFloorLine(read(SKILL_PATH)) })
+		const skill = withoutCliVersionFloorLine(read(SKILL_PATH))
+		const { exitCode, output } = runInstallCheck({ skill })
 		expect(exitCode).not.toBe(0)
 		expect(output).toContain("CLI version floor ''")
 		expect(output).toContain(`expected ${CLI_VERSION_FLOOR}`)

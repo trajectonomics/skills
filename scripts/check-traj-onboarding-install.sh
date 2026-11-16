@@ -122,10 +122,8 @@ installed_floor="$(
 	awk -v prefix="$CLI_VERSION_FLOOR_PREFIX" '
 		index($0, prefix) == 1 {
 			rest = substr($0, length(prefix) + 1)
-			if (match(rest, /`[^`]+`/)) {
-				print substr(rest, RSTART + 1, RLENGTH - 2)
-				exit
-			}
+			if (match(rest, /`[^`]+`/)) print substr(rest, RSTART + 1, RLENGTH - 2)
+			exit
 		}
 	' "$SCRATCH/project/.agents/skills/$SKILL/SKILL.md"
 )"

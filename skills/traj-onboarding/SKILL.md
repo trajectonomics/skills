@@ -54,15 +54,16 @@ Done when a version prints.
 
 The CLI version floor is `0.2.0`: the oldest `@trajectonomics/cli` release whose command surface the
 operating skill in step 2 assumes. That release carries `projection run`, `projection compare`, `fi`
-and `scenario tax`; it is pending as `trajectonomics/cli#117`. Below the floor the operating skill's
-`description` promises work the command line refuses.
+and `scenario tax` — named here for provenance only, since command shapes still come from
+`traj schema` — and the issue that tracks it is `trajectonomics/cli#117`. Below the floor the
+operating skill's `description` promises work the command line refuses.
 
-Compare the version this setup hands over against that floor. It is the first version that printed —
-`traj --version` when a binary is on `PATH`, otherwise the scoped package's — except when that print
-came from the unscoped `traj` on npm, a different package, in which case the scoped package's version
-is the one that counts. Read the first `X.Y.Z` token, keeping any `-prerelease` suffix; compare the
-three numbers in turn and never the strings, so `0.10.0` is above `0.9.0`; and treat a pre-release as
-below its release, so `1.4.0-rc.1` is below `1.4.0`.
+The version to compare is the first version that printed — `traj --version` when a binary is on
+`PATH`, otherwise the scoped package's. The unscoped `traj` on npm is a different, unrelated package:
+when that print came from it, or you cannot tell which package printed it, compare the scoped
+package's version instead. Read the first `X.Y.Z` token, keeping any `-prerelease` suffix; compare
+the three numbers in turn and never the strings, so `0.10.0` is above `0.9.0`; and treat a pre-release
+as below its release, so `1.4.0-rc.1` is below `1.4.0`.
 
 ## Step 2: Install the skill that operates `traj`
 
@@ -91,10 +92,10 @@ never needed again.
 
 **Below the floor.** When the version that printed is below the CLI version floor, disclose it before
 the handover, in these five facts: the version on this machine; the version the operating skill
-expects; the work that does work today — recording, reading balances and reports, and testing a
-Scenario; the work that does not — a projection, a financial-independence date and a tax figure; and
-the release that carries it, pending as `trajectonomics/cli#117`. Say the command line is older, not
-broken, and that nothing is installed or downloaded to fix it. Setup still finishes.
+expects; the work that still works — recording, reading balances and reports, and testing a Scenario;
+the work that does not — a projection, a financial-independence date and a tax figure; and the release
+that closes that gap, tracked as `trajectonomics/cli#117`. Say the command line is older, not broken,
+and that nothing is installed or downloaded to fix it. Setup still finishes.
 
 - Every number you give them is one `traj` returned. The tool owns what its own command surface
   lists — balances, and, from the floor up, projections, a financial-independence date and Thai tax;

@@ -12,3 +12,6 @@ An entry in `skills-lock.json` recording a skill's source and content hash so in
 
 ### Invariant
 A rule or condition that must hold true across all state transitions in this system.
+
+### CLI Version Floor
+The oldest `@trajectonomics/cli` release whose command surface the operating Skill's `description` assumes. The onboarding Skill states it once and discloses it when the command line on the machine is older, instead of handing the conversation over silently.

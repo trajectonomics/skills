@@ -1,10 +1,17 @@
 import { describe, expect, it } from "bun:test"
 import {
+	CLI_VERSION_FLOOR,
+	CLI_VERSION_FLOOR_PREFIX,
+	statedCliVersionFloor,
+} from "./cli-version-floor"
+import {
+	FLOOR_LINE,
 	INSTALL_CHECK,
 	read,
 	runInstallCheck,
 	SKILL_PATH,
 	SKILL_VERSION,
+	withoutFloorLine,
 } from "./traj-onboarding-test-support"
 
 /** `engines.node` of the skills CLI this repository pins; the README states it for visitors. */
@@ -25,6 +32,30 @@ describe("the install check", () => {
 		expect(read(INSTALL_CHECK)).toContain(`SKILL_VERSION="${SKILL_VERSION}"`)
 	})
 
+	it("pins the CLI version floor beside that version, at the floor the Skill states", () => {
+		const check = read(INSTALL_CHECK)
+		expect(check).toContain(`CLI_VERSION_FLOOR="${CLI_VERSION_FLOOR}"`)
+		expect(check).toContain(`CLI_VERSION_FLOOR_PREFIX='${CLI_VERSION_FLOOR_PREFIX}'`)
+		expect(statedCliVersionFloor(read(SKILL_PATH))).toBe(CLI_VERSION_FLOOR)
+	})
+
+	it("fails when the installed copy drops the floor sentence, naming both numbers", () => {
+		const skill = withoutFloorLine(read(SKILL_PATH))
+		const { exitCode, output } = runInstallCheck({ skill })
+		expect(exitCode).not.toBe(0)
+		expect(output).toContain("CLI version floor ''")
+		expect(output).toContain(`expected ${CLI_VERSION_FLOOR}`)
+	})
+
+	it("fails when the installed copy states another number, naming both numbers", () => {
+		const skill = read(SKILL_PATH).replace(FLOOR_LINE, `${CLI_VERSION_FLOOR_PREFIX}\`0.3.0\``)
+		expect(skill).not.toBe(read(SKILL_PATH))
+		const { exitCode, output } = runInstallCheck({ skill })
+		expect(exitCode).not.toBe(0)
+		expect(output).toContain("CLI version floor '0.3.0'")
+		expect(output).toContain(`expected ${CLI_VERSION_FLOOR}`)
+	})
+
 	it("fails when the installed SKILL.md loses the release version", () => {
 		const skill = read(SKILL_PATH).replace(`metadata:\n  version: "${SKILL_VERSION}"\n`, "")
 		expect(skill).not.toBe(read(SKILL_PATH))
@@ -43,6 +74,8 @@ describe("the install check", () => {
 			"metadata:",
 			`  version: "${SKILL_VERSION}"`,
 			"---",
+			"",
+			FLOOR_LINE,
 			"",
 		].join("\n")
 		expect(runInstallCheck({ skill }).exitCode).toBe(0)
@@ -70,6 +103,8 @@ describe("the install check", () => {
 			"metadata:",
 			`  version: "${SKILL_VERSION}"  `,
 			"---",
+			"",
+			FLOOR_LINE,
 			"",
 		].join("\n")
 		expect(runInstallCheck({ skill }).exitCode).toBe(0)

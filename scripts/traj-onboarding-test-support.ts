@@ -11,6 +11,7 @@ import {
 import { homedir } from "node:os"
 import { join } from "node:path"
 import { fileURLToPath } from "node:url"
+import { CLI_VERSION_FLOOR, CLI_VERSION_FLOOR_PREFIX } from "./cli-version-floor"
 
 /** The repository root, so a test reads the files a visitor receives, never a copied fixture. */
 export const repoRoot = fileURLToPath(new URL("..", import.meta.url))
@@ -23,6 +24,17 @@ export const INSTALL_CHECK = "scripts/check-traj-onboarding-install.sh"
 
 /** The Skill's stable version: the repository tag, and the version the Site announces. */
 export const SKILL_VERSION = "0.1.0"
+
+/** The one line that states the CLI Version Floor, as the Skill and an installed copy write it. */
+export const FLOOR_LINE = `${CLI_VERSION_FLOOR_PREFIX}\`${CLI_VERSION_FLOOR}\``
+
+/** The Skill's source with its floor line removed, the way a stale installed copy arrives. */
+export function withoutFloorLine(skillSource: string): string {
+	const lines = skillSource.split(/\r?\n/)
+	const kept = lines.filter((line) => !line.startsWith(CLI_VERSION_FLOOR_PREFIX))
+	if (kept.length === lines.length) throw new Error(`no '${CLI_VERSION_FLOOR_PREFIX}' line`)
+	return kept.join("\n")
+}
 
 /** One repository file as text. */
 export function read(relativePath: string): string {

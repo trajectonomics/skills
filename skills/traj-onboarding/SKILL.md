@@ -25,8 +25,9 @@ Run both checks first, so a machine that is half set up only gets the half it is
   a skill named `traj` whose `source` is `trajectonomics/internal-skills` is the operating skill, and
   its `path` is where you read it. A `traj` in the other scope belongs to another setup.
 
-When both pass and the step 3 question is answered, setup is done: this skill stops, and every later
-conversation about their money is the operating skill's.
+When both pass, the step 3 question is answered, and a below-floor command line has been disclosed
+where one exists, setup is done: this skill stops, and every later conversation about their money is
+the operating skill's.
 
 ## Step 1: Install the command line
 
@@ -50,6 +51,19 @@ them run it. Running a remote script is their decision to make, not yours. If th
 read, keep to the scoped package above and invent no script URL.
 
 Done when a version prints.
+
+The CLI version floor is `0.2.0`: the oldest `@trajectonomics/cli` release whose command surface the
+operating skill in step 2 assumes. That release carries `projection run`, `projection compare`, `fi`
+and `scenario tax` — named here for provenance only, since command shapes still come from
+`traj schema` — and the issue that tracks it is `trajectonomics/cli#117`. Below the floor the
+operating skill's `description` promises work the command line refuses.
+
+The version to compare is the first version that printed — `traj --version` when a binary is on
+`PATH`, otherwise the scoped package's. The unscoped `traj` on npm is a different, unrelated package:
+when that print came from it, or you cannot tell which package printed it, compare the scoped
+package's version instead. Read the first `X.Y.Z` token, keeping any `-prerelease` suffix; compare
+the three numbers in turn and never the strings, so `0.10.0` is above `0.9.0`; and treat a pre-release
+as below its release, so `1.4.0-rc.1` is below `1.4.0`.
 
 ## Step 2: Install the skill that operates `traj`
 
@@ -76,10 +90,20 @@ conversation.
 Tell them that a new session loads that skill whenever they talk about their money, so this setup is
 never needed again.
 
-- Every number you give them is one `traj` returned. The tool owns balances, projections and dates;
-  the person owns the facts that feed them.
-- This skill states no tax meaning. Tax is the operating skill's to explain.
+**Below the floor.** When the version that printed is below the CLI version floor, disclose it before
+the handover, in these five facts: the version on this machine; the version the operating skill
+expects; the work that still works — recording, reading balances and reports, and testing a Scenario;
+the work that does not — a projection, a financial-independence date and a tax figure; and the release
+that closes that gap, tracked as `trajectonomics/cli#117`. Say the command line is older, not broken,
+and that nothing is installed or downloaded to fix it. Setup still finishes.
+
+- Every number you give them is one `traj` returned. The tool owns what its own command surface
+  lists — balances, and, from the floor up, projections, a financial-independence date and Thai tax;
+  the person owns the facts that feed them. Below the floor, promise none of the last three.
+- This skill states no tax meaning. From the floor up, tax is the operating skill's to explain; below
+  it, no tax meaning is on offer from this machine.
 - Commands, flags and document shapes come from `traj schema`, not from this document, because the
   command surface changes as features land.
 
-Done when their answer is in hand and the operating skill is running the conversation.
+Done when their answer is in hand, a below-floor command line has been disclosed where one exists,
+and the operating skill is running the conversation.

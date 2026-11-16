@@ -14,6 +14,10 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SOURCE="${1:-$REPO_ROOT}"
 SKILL="traj-onboarding"
 SKILL_VERSION="0.1.0"
+# The oldest @trajectonomics/cli release whose command surface the operating Skill this check installs
+# assumes; scripts/cli-version-floor.ts pins the same number, and its test pins the two together.
+CLI_VERSION_FLOOR="0.2.0"
+CLI_VERSION_FLOOR_PREFIX='The CLI version floor is '
 SKILLS_CLI="skills@1.7.6"
 AGENTS=(claude-code codex)
 CACHE_ROOT="${XDG_CACHE_HOME:-$HOME/.cache}"
@@ -109,6 +113,22 @@ installed_version="$(
 )"
 [ "$installed_version" = "$SKILL_VERSION" ] ||
 	fail "the installed $SKILL/SKILL.md carries metadata.version '${installed_version}', expected $SKILL_VERSION (the Site names it as the stable marker)"
+
+# The Skill hands the conversation to the operating Skill, whose description assumes a command line that
+# can project, compute an FI date and apply Thai tax. It states the oldest release that carries them, so
+# an installed copy that drops that line — or states another number — is not the copy this repository
+# pins. Read the number out of the installed copy's body, the copy a visitor receives.
+installed_floor="$(
+	awk -v prefix="$CLI_VERSION_FLOOR_PREFIX" '
+		index($0, prefix) == 1 {
+			rest = substr($0, length(prefix) + 1)
+			if (match(rest, /`[^`]+`/)) print substr(rest, RSTART + 1, RLENGTH - 2)
+			exit
+		}
+	' "$SCRATCH/project/.agents/skills/$SKILL/SKILL.md"
+)"
+[ "$installed_floor" = "$CLI_VERSION_FLOOR" ] ||
+	fail "the installed $SKILL/SKILL.md states the CLI version floor '${installed_floor}', expected $CLI_VERSION_FLOOR (the operating Skill it installs assumes that release)"
 
 echo "PASS: the website command installs exactly the $SKILL Skill, and no other Skill from this repository."
 echo "      Source: $SOURCE"

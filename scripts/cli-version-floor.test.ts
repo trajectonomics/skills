@@ -3,13 +3,10 @@ import {
 	CLI_VERSION_FLOOR,
 	CLI_VERSION_FLOOR_PREFIX,
 	statedCliVersionFloor,
-	withoutCliVersionFloorLine,
 } from "./cli-version-floor"
-import { read, SKILL_PATH } from "./traj-onboarding-test-support"
+import { FLOOR_LINE, read, SKILL_PATH, withoutFloorLine } from "./traj-onboarding-test-support"
 
 const skill = read(SKILL_PATH)
-/** The one line that states the floor, as the Skill writes it. */
-const FLOOR_LINE = `${CLI_VERSION_FLOOR_PREFIX}\`${CLI_VERSION_FLOOR}\``
 /** The sentence both rules that end setup must count. */
 const DISCLOSURE_COUNTED = "a below-floor command line has been disclosed"
 
@@ -86,8 +83,7 @@ describe("the CLI Version Floor the traj-onboarding Skill declares", () => {
 		expect(section(skill, "Step 3: Ask once, then hand over")).toContain(DISCLOSURE_COUNTED)
 	})
 
-	it("cannot pass the static assertion once the Skill drops the floor sentence", () => {
-		const withoutFloor = withoutCliVersionFloorLine(skill)
-		expect(() => pinnedFloor(withoutFloor)).toThrow(CLI_VERSION_FLOOR)
+	it("rejects a Skill that drops the floor sentence", () => {
+		expect(() => pinnedFloor(withoutFloorLine(skill))).toThrow(CLI_VERSION_FLOOR)
 	})
 })

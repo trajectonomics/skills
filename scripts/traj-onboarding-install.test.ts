@@ -3,21 +3,19 @@ import {
 	CLI_VERSION_FLOOR,
 	CLI_VERSION_FLOOR_PREFIX,
 	statedCliVersionFloor,
-	withoutCliVersionFloorLine,
 } from "./cli-version-floor"
 import {
+	FLOOR_LINE,
 	INSTALL_CHECK,
 	read,
 	runInstallCheck,
 	SKILL_PATH,
 	SKILL_VERSION,
+	withoutFloorLine,
 } from "./traj-onboarding-test-support"
 
 /** `engines.node` of the skills CLI this repository pins; the README states it for visitors. */
 const SKILLS_CLI_NODE_FLOOR = "22.20"
-
-/** The one line that states the floor, as the Skill and a stale installed copy write it. */
-const FLOOR_LINE = `${CLI_VERSION_FLOOR_PREFIX}\`${CLI_VERSION_FLOOR}\``
 
 describe("the install check", () => {
 	it("lists with the pinned CLI, then installs exactly this Skill for two agents", () => {
@@ -42,7 +40,7 @@ describe("the install check", () => {
 	})
 
 	it("fails when the installed copy drops the floor sentence, naming both numbers", () => {
-		const skill = withoutCliVersionFloorLine(read(SKILL_PATH))
+		const skill = withoutFloorLine(read(SKILL_PATH))
 		const { exitCode, output } = runInstallCheck({ skill })
 		expect(exitCode).not.toBe(0)
 		expect(output).toContain("CLI version floor ''")

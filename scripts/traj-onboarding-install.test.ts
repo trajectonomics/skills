@@ -1,4 +1,6 @@
 import { describe, expect, it } from "bun:test"
+import { readdirSync } from "node:fs"
+import { join } from "node:path"
 import {
 	CLI_VERSION_FLOOR,
 	CLI_VERSION_FLOOR_PREFIX,
@@ -7,7 +9,10 @@ import {
 import {
 	FLOOR_LINE,
 	INSTALL_CHECK,
+	OPERATING_SKILL_PATH,
+	PUBLISHED_SKILLS,
 	read,
+	repoRoot,
 	runInstallCheck,
 	SKILL_PATH,
 	SKILL_VERSION,
@@ -18,14 +23,39 @@ import {
 const SKILLS_CLI_NODE_FLOOR = "22.20"
 
 describe("the install check", () => {
-	it("lists with the pinned CLI, then installs exactly this Skill for two agents", () => {
+	it("lists with the pinned CLI, then installs the onboarding Skill and the operating one", () => {
 		const { exitCode, calls, cacheLeftovers } = runInstallCheck()
 		expect(exitCode).toBe(0)
-		expect(calls).toHaveLength(2)
+		expect(calls).toHaveLength(3)
 		expect(calls[0]).toMatch(/^-\S+ skills@\d+\.\d+\.\d+ add \S+ --list$/)
-		expect(calls[1]).toMatch(/^-\S+ skills@\d+\.\d+\.\d+ add \S+ --skill traj-onboarding/)
+		expect(calls[1]).toMatch(/^-\S+ skills@\d+\.\d+\.\d+ add \S+ --skill traj-onboarding /)
+		expect(calls[2]).toMatch(/^-\S+ skills@\d+\.\d+\.\d+ add \S+ --skill traj /)
 		expect(calls[1]).toContain("-a claude-code codex -y")
+		expect(calls[2]).toContain("-a claude-code codex -y")
 		expect(cacheLeftovers).toEqual([])
+	})
+
+	it("pins exactly the Skills that live under skills/", () => {
+		const published = readdirSync(join(repoRoot, "skills")).sort()
+		expect(published).toEqual([...PUBLISHED_SKILLS].sort())
+	})
+
+	it("fails when the source publishes another Skill set", () => {
+		const narrowed = runInstallCheck({ publishedSkills: ["traj-onboarding"] })
+		expect(narrowed.exitCode).not.toBe(0)
+		expect(narrowed.output).toContain("does not publish exactly 2 Skills")
+
+		const widened = runInstallCheck({ publishedSkills: [...PUBLISHED_SKILLS, "human-go"] })
+		expect(widened.exitCode).not.toBe(0)
+		expect(widened.output).toContain("does not publish exactly 2 Skills")
+	})
+
+	it("matches a published name exactly, so traj-onboarding does not stand in for traj", () => {
+		const { exitCode, output } = runInstallCheck({
+			publishedSkills: ["traj-onboarding", "something-else"],
+		})
+		expect(exitCode).not.toBe(0)
+		expect(output).toContain("does not publish traj")
 	})
 
 	it("states the Skill's version once, in the check that the install keeps it", () => {
@@ -63,6 +93,27 @@ describe("the install check", () => {
 		expect(exitCode).not.toBe(0)
 		expect(output).toContain("metadata.version")
 		expect(output).toContain(`expected ${SKILL_VERSION}`)
+	})
+
+	it("fails when the operating Skill installed without a SKILL.md, not merely on awk", () => {
+		const { exitCode, output } = runInstallCheck({ operatingSkill: null })
+		expect(exitCode).not.toBe(0)
+		expect(output).toContain("traj/SKILL.md was not installed")
+	})
+
+	it("fails when the installed operating Skill is named something else", () => {
+		const operatingSkill = read(OPERATING_SKILL_PATH).replace("name: traj", "name: not-traj")
+		const { exitCode, output } = runInstallCheck({ operatingSkill })
+		expect(exitCode).not.toBe(0)
+		expect(output).toContain("is named 'not-traj'")
+		expect(output).toContain("expected traj")
+	})
+
+	it("fails when the installed operating Skill drops the contract it publishes", () => {
+		const operatingSkill = read(OPERATING_SKILL_PATH).replaceAll("traj schema --json", "traj")
+		const { exitCode, output } = runInstallCheck({ operatingSkill })
+		expect(exitCode).not.toBe(0)
+		expect(output).toContain("does not contain 'traj schema --json'")
 	})
 
 	it("reads the version from the metadata block, not another nested version: line", () => {

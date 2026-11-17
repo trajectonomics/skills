@@ -8,7 +8,7 @@ import { read, repoRoot, SKILL_PATH, SKILL_VERSION } from "./traj-onboarding-tes
  * networked check that runs the install has its own file, `traj-onboarding-install.test.ts`.
  */
 const WEBSITE_COMMAND = "npx skills add trajectonomics/skills --skill traj-onboarding"
-const OPERATING_SKILL_COMMAND = "npx skills add trajectonomics/internal-skills --skill traj"
+const OPERATING_SKILL_COMMAND = "npx skills add trajectonomics/skills --skill traj"
 const CLI_REPOSITORY = "https://github.com/trajectonomics/cli"
 const CLI_PACKAGE = "@trajectonomics/cli"
 const PRIVATE_PACKAGE = "bun add @trajectonomics/skills"
@@ -56,10 +56,11 @@ describe("the traj-onboarding Skill", () => {
 		expect(block).toContain(`\nmetadata:\n  version: "${SKILL_VERSION}"`)
 	})
 
-	it("installs the operating Skill from internal-skills in this Skill's own scope", () => {
+	it("installs the operating Skill from this repository in this Skill's own scope", () => {
 		expect(body).toContain(OPERATING_SKILL_COMMAND)
 		expect(body).toContain("skills list --json")
 		expect(body).toContain("add `-g` when the project list did not name `traj-onboarding`")
+		expect(body).not.toContain("internal-skills")
 	})
 
 	it("runs the scoped command line package and points PATH installs at the CLI repository", () => {
@@ -94,15 +95,17 @@ describe("the README the website links to", () => {
 })
 
 describe("the published Skill set", () => {
-	it("keeps traj-onboarding out of skills-lock.json, which would hide it from visitors", () => {
+	it("keeps no Skill Pin for either first-party Skill, which would hide it from visitors", () => {
 		const lock: { skills?: Record<string, unknown> } = JSON.parse(read("skills-lock.json"))
-		expect(Object.keys(lock.skills ?? {})).not.toContain("traj-onboarding")
+		const pinned = Object.keys(lock.skills ?? {})
+		for (const skill of ["traj-onboarding", "traj"]) expect(pinned).not.toContain(skill)
 	})
 
 	it.each([".agents/skills", ".claude/skills", ".vibe/skills"])(
-		"keeps traj-onboarding out of %s, which holds vendored Skills only",
+		"keeps both first-party Skills out of %s, which holds vendored Skills only",
 		(vendoredTree) => {
-			expect(existsSync(join(repoRoot, vendoredTree, "traj-onboarding"))).toBe(false)
+			for (const skill of ["traj-onboarding", "traj"])
+				expect(existsSync(join(repoRoot, vendoredTree, skill))).toBe(false)
 		},
 	)
 })

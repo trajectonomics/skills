@@ -36,6 +36,9 @@ Save owner attention:
 - **Bootstrap Skill (`setup-the-repo`)**: Single-use interactive setup wizard. When initializing a new repo from this template, run `/setup-the-repo` (or `bun run setup`). It customizes the repository, verifies the build, removes itself, and instructs you to run `/setup-matt-pocock-skills`.
 - **Matt Pocock Skills (`mattpocock/skills`)**: Complete engineering workflow including `/ask-matt`, `/tdd`, `/implement`, `/code-review`, `/wayfinder`, `/diagnosing-bugs`, `/codebase-design`, `/grill-with-docs`, etc.
 - **Trajectonomics Internal Skills (`trajectonomics/internal-skills`)**: Organization-specific workflow including `/pick-the-issue` to discover unblocked GitHub issues not currently handled by active T3 Code sessions and route them into the `ask-matt` framework.
+- **First-party customer Skills (`skills/`)**: `traj-onboarding` sets a person up on `traj`, and `traj`
+  operates the command line afterwards. Both publish from this repository and are installed from it,
+  never from `internal-skills` ([ADR 0003](./docs/adr/0003-customer-skills-publish-from-this-repository.md)).
 
 ### Reviewing a diff
 

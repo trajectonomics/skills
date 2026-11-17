@@ -4,7 +4,13 @@ import {
 	CLI_VERSION_FLOOR_PREFIX,
 	statedCliVersionFloor,
 } from "./cli-version-floor"
-import { FLOOR_LINE, read, SKILL_PATH, withoutFloorLine } from "./traj-onboarding-test-support"
+import {
+	FLOOR_LINE,
+	OPERATING_SKILL_PATH,
+	read,
+	SKILL_PATH,
+	withoutFloorLine,
+} from "./traj-onboarding-test-support"
 
 const skill = read(SKILL_PATH)
 /** The sentence both rules that end setup must count. */
@@ -32,6 +38,10 @@ describe("the CLI Version Floor the traj-onboarding Skill declares", () => {
 	it("states the floor this repository pins, once", () => {
 		expect(pinnedFloor(skill)).toBe(CLI_VERSION_FLOOR)
 		expect(skill.split(CLI_VERSION_FLOOR)).toHaveLength(2)
+	})
+
+	it("states it in the onboarding Skill alone, never a second time in the operating Skill", () => {
+		expect(read(OPERATING_SKILL_PATH)).not.toContain(CLI_VERSION_FLOOR_PREFIX)
 	})
 
 	it("reads no floor from a Skill that states none, and none from a marked line without one", () => {

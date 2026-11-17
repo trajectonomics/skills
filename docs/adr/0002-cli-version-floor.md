@@ -2,8 +2,9 @@
 
 **Status**: Accepted
 
-The onboarding Skill hands the conversation to the operating Skill (`traj`, from
-`trajectonomics/internal-skills`), whose `description` assumes a command line that can project,
+The onboarding Skill hands the conversation to the operating Skill (`traj`, which publishes from
+this repository where [ADR 0003](./0003-customer-skills-publish-from-this-repository.md) records the
+move), whose `description` assumes a command line that can project,
 compute a financial-independence date and apply Thai tax. Those commands exist on the CLI's `main`
 and not in its only published release, so the Skill declares the oldest release that carries them —
 the [CLI Version Floor](../GLOSSARY.md) — and compares it with the version setup already prints,

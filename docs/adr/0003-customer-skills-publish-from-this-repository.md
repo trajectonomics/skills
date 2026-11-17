@@ -8,8 +8,8 @@
 `trajectonomics/internal-skills`, this organisation's repository of internal workflow Skills
 (`human-go`, `human-decline`, `human-help`, `human-postpone`, `introduce-new-sub`,
 `pick-the-issue`). A customer runs `traj` every day and is not an internal session, so onboarding
-handed them a Skill whose [Skill Pin](../../GLOSSARY.md#skill-pin) lives in a repository they were
-never told about — the Skill said as much: "The person never opens that repository". Two
+handed them a Skill published from `trajectonomics/internal-skills`, a repository they were never
+told about — the Skill said as much: "The person never opens that repository". Two
 consequences followed. The [CLI Version Floor](./0002-cli-version-floor.md) became a claim about a
 Skill in another repository, so raising it needed a change here and a matching release there. And the
 operating Skill's own text, the thing that decides whether a customer's agent follows the shipped

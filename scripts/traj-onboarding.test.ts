@@ -1,6 +1,7 @@
 import { describe, expect, it } from "bun:test"
 import { existsSync } from "node:fs"
 import { join } from "node:path"
+import { skillFrontmatter } from "./skill-frontmatter"
 import { read, repoRoot, SKILL_PATH, SKILL_VERSION } from "./traj-onboarding-test-support"
 
 /**
@@ -15,27 +16,8 @@ const PRIVATE_PACKAGE = "bun add @trajectonomics/skills"
 /** `engines.node` of the command line the Skill installs. */
 const CLI_NODE_FLOOR = "Node 20"
 
-/**
- * The Skill's frontmatter: its top-level `key: value` lines, the block as written (which carries
- * the spec's nested `metadata`) and the body.
- */
-function frontmatter(source: string): {
-	fields: Map<string, string>
-	block: string
-	body: string
-} {
-	const match = /^---\r?\n([\s\S]*?)\r?\n---\r?\n/.exec(source)
-	if (!match) throw new Error(`${SKILL_PATH} must open with a --- frontmatter block`)
-	const fields = new Map<string, string>()
-	for (const line of (match[1] ?? "").split(/\r?\n/)) {
-		const field = /^([A-Za-z][\w-]*):\s*(.*)$/.exec(line)
-		if (field?.[1] !== undefined) fields.set(field[1], (field[2] ?? "").trim())
-	}
-	return { fields, block: match[1] ?? "", body: source.slice(match[0].length) }
-}
-
 describe("the traj-onboarding Skill", () => {
-	const { fields, block, body } = frontmatter(read(SKILL_PATH))
+	const { fields, block, body } = skillFrontmatter(read(SKILL_PATH), SKILL_PATH)
 
 	it("is named traj-onboarding and fires on getting started with someone's money", () => {
 		expect(fields.get("name")).toBe("traj-onboarding")

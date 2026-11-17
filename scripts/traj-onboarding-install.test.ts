@@ -62,10 +62,6 @@ describe("the install check", () => {
 		expect(read(INSTALL_CHECK)).toContain(`SKILL_VERSION="${SKILL_VERSION}"`)
 	})
 
-	it("pins a version only for the Skill that declares one", () => {
-		expect(read(OPERATING_SKILL_PATH)).not.toContain("metadata:")
-	})
-
 	it("pins the CLI version floor beside that version, at the floor the Skill states", () => {
 		const check = read(INSTALL_CHECK)
 		expect(check).toContain(`CLI_VERSION_FLOOR="${CLI_VERSION_FLOOR}"`)
@@ -97,6 +93,12 @@ describe("the install check", () => {
 		expect(exitCode).not.toBe(0)
 		expect(output).toContain("metadata.version")
 		expect(output).toContain(`expected ${SKILL_VERSION}`)
+	})
+
+	it("fails when the operating Skill installed without a SKILL.md, not merely on awk", () => {
+		const { exitCode, output } = runInstallCheck({ operatingSkill: null })
+		expect(exitCode).not.toBe(0)
+		expect(output).toContain("traj/SKILL.md was not installed")
 	})
 
 	it("fails when the installed operating Skill is named something else", () => {

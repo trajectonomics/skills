@@ -55,7 +55,8 @@ export function runInstallCheck({
 	publishedSkills = PUBLISHED_SKILLS,
 }: {
 	skill?: string
-	operatingSkill?: string
+	/** `null` installs the operating Skill's directory with no `SKILL.md`, the way a dead install looks. */
+	operatingSkill?: string | null
 	publishedSkills?: readonly string[]
 } = {}): {
 	exitCode: number
@@ -76,7 +77,7 @@ export function runInstallCheck({
 		["traj", operatingSkill],
 	] as const) {
 		mkdirSync(join(skillsDir, name), { recursive: true })
-		writeFileSync(join(skillsDir, name, "SKILL.md"), source)
+		if (source !== null) writeFileSync(join(skillsDir, name, "SKILL.md"), source)
 	}
 	writeFileSync(list, stubList(publishedSkills))
 	writeFileSync(join(binDir, "npx"), STUB_NPX)

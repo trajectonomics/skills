@@ -183,6 +183,8 @@ expect_installed "$SCRATCH/add-operating.log" "$(printf '%s\n%s' "$OPERATING_SKI
 # The operating Skill declares no metadata.version, so there is no version to compare; what an
 # installed copy must keep is its name and the two facts that make it the operating contract rather
 # than an empty directory the CLI happened to create.
+[ -f "$SCRATCH/project/.agents/skills/$OPERATING_SKILL/SKILL.md" ] ||
+	fail "$OPERATING_SKILL/SKILL.md was not installed"
 installed_name="$(frontmatter_name "$SCRATCH/project/.agents/skills/$OPERATING_SKILL/SKILL.md")"
 [ "$installed_name" = "$OPERATING_SKILL" ] ||
 	fail "the installed $OPERATING_SKILL/SKILL.md is named '${installed_name}', expected $OPERATING_SKILL"

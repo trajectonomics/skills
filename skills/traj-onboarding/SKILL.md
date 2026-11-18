@@ -1,6 +1,6 @@
 ---
 name: traj-onboarding
-description: "Set up `traj`, the personal money command line, for someone starting out: install the command line, install the skill that operates it, and start from their financial situation and their goal. Use when someone wants to get started with their money, asks to install `traj`, or tells you their financial situation and their goal while setup is not done."
+description: "Set up `traj`, the personal money command line, for someone starting out, or set it up again on a machine that already has a ledger: install the command line, install the skill that operates it, and start from their financial situation and their goal. Use when someone wants to get started with their money, asks to install `traj`, or tells you their financial situation and their goal while setup is not done."
 metadata:
   version: "0.1.0"
 ---
@@ -9,12 +9,19 @@ metadata:
 
 Set a person up on `traj`: install the command line, install the skill that operates it, and start
 from their own money. Three steps, each with a check you run. A step whose check already passes is
-done, and setup is finished when all three pass.
+done, and the first section says when setup is finished.
 
 ## Check what is already done
 
-Run both checks first, so a machine that is half set up only gets the half it is missing.
+Run all three checks first, so a machine that is half set up only gets the half it is missing, and a
+person who has done this before is noticed before anything is installed.
 
+- **Ledger File**: whether `${TRAJ_HOME:-~/.traj}/traj.db` is there. Test for existence and nothing
+  more: never open the file, and never run a `traj` command to look for it, because every
+  store-opening command creates the very file this check reads. The file means the ledger has been
+  opened on this machine at least once; it never means the ledger holds data. The directory is not the
+  signal either: the version check below creates it for a brand-new person, and only a store-opening
+  command creates the file.
 - **Command line**: `traj --version`, then `npx -y @trajectonomics/cli@latest --version`. A version
   that prints is the command line. When the machine has neither, that first run of the scoped package
   fetches the binary once and caches it, so this check is also the install; it narrates the download
@@ -25,9 +32,10 @@ Run both checks first, so a machine that is half set up only gets the half it is
   a skill named `traj`, whose `source` is `trajectonomics/skills` like this one's, is the operating
   skill, and its `path` is where you read it. A `traj` in the other scope belongs to another setup.
 
-When both pass, the step 3 question is answered, and a below-floor command line has been disclosed
-where one exists, setup is done: this skill stops, and every later conversation about their money is
-the operating skill's.
+When the two install checks pass and step 3 has ended — its question answered by the person directly
+or grounded in the Ledger File they already have, or, where the read failed, that failure reported and
+the handover made — and a below-floor command line has been disclosed where one exists, setup is done:
+this skill stops, and every later conversation about their money is the operating skill's.
 
 ## Step 1: Install the command line
 
@@ -84,12 +92,9 @@ the `path` it reports.
 
 ## Step 3: Ask once, then hand over
 
-Ask the person two things in one question: their financial situation, and their goal. Then read the
-`traj` skill at the `path` the list command reported, and follow it for the rest of this
-conversation.
-
-Tell them that a new session loads that skill whenever they talk about their money, so this setup is
-never needed again.
+Ask once, then hand over. Step 3 has one open for a machine with no Ledger File and one for a machine
+that has one, and each open starts with its lead-in sentence in bold. The below-floor disclosure comes
+in every open, before any handover — the failed read included.
 
 **Below the floor.** When the version that printed is below the CLI version floor, disclose it before
 the handover, in these five facts: the version on this machine; the version the operating skill
@@ -106,5 +111,28 @@ and that nothing is installed or downloaded to fix it. Setup still finishes.
 - Commands, flags and document shapes come from `traj schema`, not from this document, because the
   command surface changes as features land.
 
-Done when their answer is in hand, a below-floor command line has been disclosed where one exists,
-and the operating skill is running the conversation.
+**A ledger file already exists.** Read the `traj` skill at the `path` the list command reported, and
+follow it to read the ledger, taking every command and flag from the schema and none from this
+document. Then report what it found before you ask anything, in one of three ways:
+
+- **It holds rows.** Say what the ledger holds, in the names and numbers the read returned, and ask
+  one question: does that match, and what is their goal now. The situation half is the ledger's to
+  tell, and a job that started or an account that closed is the person's correction to make; the goal
+  is not in the ledger and can change, so it is asked again. Fold their answer in and stay in the
+  operating skill.
+- **It holds nothing yet.** Say that the file is there and the ledger is empty, then ask the two
+  questions the open below asks.
+- **The read failed.** Report what the command line said, in its own words. Then hand the conversation
+  over without an interview: a read that failed is no reason to make the person retype what may
+  already be recorded there.
+
+**No ledger file yet.** Ask the person two things in one question: their financial situation, and
+their goal. Then read the `traj` skill at the `path` the list command reported, and follow it for the
+rest of this conversation.
+
+Tell them, in every open, that a new session loads that skill by itself whenever they talk about their
+money, and that another machine needs setup once.
+
+Done when their answer is in hand — given directly, or confirmed against the Ledger File — or, where
+the read failed, the failure has been reported and the conversation handed over; a below-floor command
+line has been disclosed where one exists; and the operating skill is running the conversation.

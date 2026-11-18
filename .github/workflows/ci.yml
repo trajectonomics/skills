@@ -31,3 +31,16 @@ jobs:
 
       - name: Run verification checks
         run: bun run check
+
+      # A published Skill may name only what the CLI at its CLI Range floor publishes. The offline
+      # half runs inside `bun run check` on a checked-in fixture; this step regenerates that fixture
+      # from each release the manifest declares, fails when it has drifted, and checks the Skills
+      # against the live surface so nothing passes by naming a command that only exists on `main`.
+      - name: Check the Skills name only what the CLI publishes
+        run: |
+          for floor in $(bun scripts/cli-schema-fixture.ts --floors); do
+            bun scripts/cli-schema-fixture.ts --floor "$floor" \
+              --out "$RUNNER_TEMP/cli-schema-$floor.json" \
+              --compare "scripts/fixtures/cli-schema-$floor.json"
+          done
+          bun scripts/check-skill-command-surface.ts "$RUNNER_TEMP"/cli-schema-*.json

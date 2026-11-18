@@ -17,10 +17,15 @@ Install the onboarding skill, then let your agent set you up:
 npx skills add trajectonomics/skills --skill traj-onboarding
 ```
 
-The onboarding skill installs the `traj` command line and then the `traj` operating skill, which
-publishes from this repository too. The `skills` CLI version this skill is checked against,
-`skills@1.7.6`, needs Node 22.20 or later. The `traj` command line the skill installs needs Node 20 or
-later.
+Or paste this to your agent, which runs it for you:
+
+> Install `traj` for me. Run `npx skills add trajectonomics/skills --skill traj-onboarding -y`, then
+> read the `traj-onboarding` skill and follow it to set me up. If you cannot run shell commands, say
+> so and give me the command above to run myself.
+
+The onboarding skill installs the `traj` command line and then the published skill set, from the one
+commit it was installed from. The `skills` CLI version this skill is checked against, `skills@1.9.0`,
+needs Node 22.20 or later. The `traj` command line the skill installs needs Node 20 or later.
 
 ---
 

@@ -1,13 +1,16 @@
 import { describe, expect, it } from "bun:test"
 import { skillFrontmatter } from "./skill-frontmatter"
-import { OPERATING_SKILL_PATH, read } from "./traj-onboarding-test-support"
+import { metadataCli } from "./skill-metadata"
+import { manifest, OPERATING_SKILL_PATH, read } from "./skills-test-support"
 
 /**
  * Static checks on the first-party operating Skill, `traj`, which publishes from this repository and
- * which the onboarding Skill installs. `traj-onboarding-install.test.ts` holds the install proof.
+ * which the onboarding Skill installs. `check-skills-install.test.ts` holds the install proof, and
+ * `skill-command-surface.test.ts` holds the rule that it names only what the CLI publishes.
  */
 describe("the traj operating Skill", () => {
-	const { fields, block, body } = skillFrontmatter(read(OPERATING_SKILL_PATH), OPERATING_SKILL_PATH)
+	const source = read(OPERATING_SKILL_PATH)
+	const { fields, block, body } = skillFrontmatter(source, OPERATING_SKILL_PATH)
 
 	it("is named traj and fires on someone's own money", () => {
 		expect(fields.get("name")).toBe("traj")
@@ -24,7 +27,9 @@ describe("the traj operating Skill", () => {
 		expect(fields.has("disable-model-invocation")).toBe(false)
 	})
 
-	it("declares no nested version of its own, which would need a pin of its own", () => {
+	it("carries the manifest's CLI Range, and no version of its own to pin", () => {
+		const row = manifest.skills.find((candidate) => candidate.name === "traj")
+		expect(metadataCli(source)).toBe(row?.cliRange ?? "")
 		expect(block).not.toMatch(/^\s+version:/m)
 	})
 
@@ -39,9 +44,16 @@ describe("the traj operating Skill", () => {
 		expect(body).toContain("not from memory and not from this document")
 	})
 
-	it("runs the scoped package and warns that the unscoped name belongs to someone else", () => {
+	it("never invents a command, a flag, a field or an enum value", () => {
+		expect(body).toContain("**Never invent a command, a flag, a field or an enum value.**")
+		expect(body).toContain("a guess that happens to run is worse than a refusal")
+	})
+
+	it("runs the scoped package, warns that the unscoped name is another package, and pins the version", () => {
 		expect(body).toContain("@trajectonomics/cli@latest")
 		expect(body).toContain("the unscoped package of the same short name belongs to someone else")
+		expect(body).toContain("get the version once and pin it")
+		expect(body).toContain("one session cannot end up running two releases")
 	})
 
 	it("keeps the person's data on their own machine", () => {
@@ -53,5 +65,72 @@ describe("the traj operating Skill", () => {
 	it("asks the command line for JSON on every call, never inferring a format", () => {
 		expect(body).toContain("Pass `--json` on every call")
 		expect(body).toContain("never inferred from a terminal")
+	})
+
+	it("reads the error envelope and the exit classes, and stops on a launcher failure", () => {
+		expect(body).toContain("A JSON error is an envelope on stderr")
+		for (const exitClass of ["`0` ok", "`2` invalid input", "`3` the domain refused it"])
+			expect(body).toContain(exitClass)
+		expect(body).toContain("is plain text rather than an envelope")
+	})
+
+	it("keeps money a decimal string in the unit the person's, never restated", () => {
+		expect(body).toContain("Money is a decimal string on the wire")
+		expect(body).toContain("keep the unit the user's")
+		expect(body).toContain(
+			"Restating one amount in a different unit is a second number you invented",
+		)
+	})
+
+	it("keeps dates Gregorian YYYY-MM-DD, converting a Buddhist Era year", () => {
+		expect(body).toContain("Dates are `YYYY-MM-DD` Gregorian")
+		expect(body).toContain("A Buddhist Era year is the same day under a different year number")
+	})
+
+	it("takes every fact from the person, including every as-of, and never the clock", () => {
+		expect(body).toContain("`traj` has no clock and no opinions")
+		expect(body).toContain("including every as-of date")
+		expect(body).toContain("it is never read off the machine")
+		expect(body).toContain("is a question, not a guess")
+	})
+
+	it("dry-runs first and sets an external reference, wherever the schema lists them", () => {
+		expect(body).toContain("**Dry run first.**")
+		expect(body).toContain("**Set an external reference on every write.**")
+		expect(body).toContain("wherever the schema lists them")
+	})
+
+	it("uses traj rather than a direct import, and says so", () => {
+		expect(body).toContain("Use `traj`; never import a core package")
+	})
+
+	it("says what this version cannot do instead of approximating it", () => {
+		expect(body).toContain("read it before you promise anything")
+		expect(body).toContain("leave the missing number missing rather than approximating it")
+		expect(body).toContain("never present an estimate as the tool's answer")
+		expect(body).toContain("states the as-of date it was read at, and whether tax is in it")
+	})
+
+	it("hands a job to the Skill that owns it, installed by its explicit name", () => {
+		expect(body).toContain("npx skills add trajectonomics/skills --skill <name> -y")
+		expect(body).toContain("is not a router either")
+	})
+
+	it("carries no recipe of its own: the tax flags, the labels, the Scenario shape and the projection commands left it", () => {
+		for (const removed of [
+			"scenario tax",
+			"--label",
+			"--filing-status",
+			"--children",
+			"income.section40_1",
+			"allowance.retirement",
+			"contentHash",
+			"Override path",
+			"sim-core",
+			"projection run",
+			"projection compare",
+			"traj fi",
+		])
+			expect(body).not.toContain(removed)
 	})
 })

@@ -1,10 +1,7 @@
 /**
- * The [CLI Version Floor](../GLOSSARY.md) the onboarding Skill declares, and the reader for the
- * one line that states it. `scripts/check-traj-onboarding-install.sh` pins the same number.
+ * The one line a Skill states its [CLI Version Floor](../GLOSSARY.md) on, and the reader for it. The
+ * number itself is derived in `scripts/manifest-floor.ts` from the [Skill Manifest](../GLOSSARY.md).
  */
-
-/** The oldest `@trajectonomics/cli` release whose command surface the operating Skill assumes. */
-export const CLI_VERSION_FLOOR = "0.2.0"
 
 /** The fixed prefix of the Skill's floor line; the version follows it in backticks. */
 export const CLI_VERSION_FLOOR_PREFIX = "The CLI version floor is "

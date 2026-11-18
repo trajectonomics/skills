@@ -36,9 +36,12 @@ Save owner attention:
 - **Bootstrap Skill (`setup-the-repo`)**: Single-use interactive setup wizard. When initializing a new repo from this template, run `/setup-the-repo` (or `bun run setup`). It customizes the repository, verifies the build, removes itself, and instructs you to run `/setup-matt-pocock-skills`.
 - **Matt Pocock Skills (`mattpocock/skills`)**: Complete engineering workflow including `/ask-matt`, `/tdd`, `/implement`, `/code-review`, `/wayfinder`, `/diagnosing-bugs`, `/codebase-design`, `/grill-with-docs`, etc.
 - **Trajectonomics Internal Skills (`trajectonomics/internal-skills`)**: Organization-specific workflow including `/pick-the-issue` to discover unblocked GitHub issues not currently handled by active T3 Code sessions and route them into the `ask-matt` framework.
-- **First-party customer Skills (`skills/`)**: `traj-onboarding` sets a person up on `traj`, and `traj`
-  operates the command line afterwards. Both publish from this repository and are installed from it,
-  never from `internal-skills` ([ADR 0003](./docs/adr/0003-customer-skills-publish-from-this-repository.md)).
+- **First-party customer Skills (`skills/`)**: the set this repository publishes is declared in
+  `skills.manifest.json` at the repository root — one row per Skill, naming its directory and the CLI
+  Range it expects, in install order. Today `traj-onboarding` sets a person up on `traj`, and `traj`
+  operates the command line afterwards; a seventh Skill is one row and one checked set. Every row
+  publishes from this repository and is installed from it, never from `internal-skills`
+  ([ADR 0003](./docs/adr/0003-customer-skills-publish-from-this-repository.md)).
 
 ### Reviewing a diff
 
@@ -69,7 +72,7 @@ Skills come from [`mattpocock/skills`](https://github.com/mattpocock/skills) and
   ```
 - Restore from the lock: `npx skills experimental_install`
 
-A Skill under the repository-root `skills/` directory is first-party and hand-edited. Do not add it to `skills-lock.json` and do not copy it into `.agents/skills/`. The skills CLI hides a Skill whose name is already in that lock, so a lock entry there makes `npx skills add trajectonomics/skills --skill <name>` unable to install it. Do not run that install command inside this repository.
+A Skill under the repository-root `skills/` directory is first-party and hand-edited, and its row in `skills.manifest.json` is what publishes it. Do not add it to `skills-lock.json` and do not copy it into `.agents/skills/`. The skills CLI hides a Skill whose name is already in that lock, so a lock entry there makes `npx skills add trajectonomics/skills --skill <name>` unable to install it. Do not run that install command inside this repository.
 
 ## Repository Information
 

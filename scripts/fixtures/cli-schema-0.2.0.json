@@ -1,0 +1,233 @@
+{
+	"version": "0.2.0",
+	"globalOptions": ["h", "help", "json", "v", "version"],
+	"commands": {
+		"account add": {
+			"positionals": ["name"],
+			"properties": ["currency", "dryRun", "name", "parent", "type"],
+			"booleans": ["dryRun"],
+			"values": {
+				"type": ["asset", "liability", "equity", "income", "expense"]
+			}
+		},
+		"account close": {
+			"positionals": ["account"],
+			"properties": ["account", "dryRun"],
+			"booleans": ["dryRun"],
+			"values": {}
+		},
+		"account list": {
+			"positionals": [],
+			"properties": [],
+			"booleans": [],
+			"values": {}
+		},
+		"account show": {
+			"positionals": ["account"],
+			"properties": ["account"],
+			"booleans": [],
+			"values": {}
+		},
+		"balance": {
+			"positionals": [],
+			"properties": ["asOf", "trialBalance"],
+			"booleans": ["trialBalance"],
+			"values": {}
+		},
+		"baseline show": {
+			"positionals": [],
+			"properties": ["asOf"],
+			"booleans": [],
+			"values": {}
+		},
+		"export": {
+			"positionals": [],
+			"properties": ["format", "out"],
+			"booleans": [],
+			"values": {
+				"format": ["jsonl", "csv", "md"]
+			}
+		},
+		"fi": {
+			"positionals": [],
+			"properties": ["asOf", "carryIn", "horizon", "scenario", "set"],
+			"booleans": [],
+			"values": {}
+		},
+		"help": {
+			"positionals": ["path"],
+			"properties": ["path"],
+			"booleans": [],
+			"values": {}
+		},
+		"init": {
+			"positionals": [],
+			"properties": [],
+			"booleans": [],
+			"values": {}
+		},
+		"inspect": {
+			"positionals": ["table"],
+			"properties": ["all", "table"],
+			"booleans": ["all"],
+			"values": {}
+		},
+		"projection compare": {
+			"positionals": ["a", "b"],
+			"properties": ["a", "age", "asOf", "b", "birthDate", "carryIn", "horizon", "set"],
+			"booleans": [],
+			"values": {}
+		},
+		"projection run": {
+			"positionals": [],
+			"properties": ["asOf", "carryIn", "horizon", "monthly", "scenario", "set"],
+			"booleans": ["monthly"],
+			"values": {}
+		},
+		"report networth": {
+			"positionals": [],
+			"properties": ["asOf"],
+			"booleans": [],
+			"values": {}
+		},
+		"report pnl": {
+			"positionals": [],
+			"properties": ["project", "since", "until"],
+			"booleans": [],
+			"values": {}
+		},
+		"scenario apply": {
+			"positionals": ["name"],
+			"properties": ["dryRun", "file", "name", "template"],
+			"booleans": ["dryRun", "template"],
+			"values": {}
+		},
+		"scenario diff": {
+			"positionals": ["a", "b"],
+			"properties": ["a", "b"],
+			"booleans": [],
+			"values": {}
+		},
+		"scenario fork": {
+			"positionals": ["from", "name"],
+			"properties": ["dryRun", "from", "name", "set"],
+			"booleans": ["dryRun"],
+			"values": {}
+		},
+		"scenario list": {
+			"positionals": [],
+			"properties": [],
+			"booleans": [],
+			"values": {}
+		},
+		"scenario rm": {
+			"positionals": ["scenario"],
+			"properties": ["dryRun", "scenario"],
+			"booleans": ["dryRun"],
+			"values": {}
+		},
+		"scenario show": {
+			"positionals": ["scenario"],
+			"properties": ["scenario"],
+			"booleans": [],
+			"values": {}
+		},
+		"scenario tax": {
+			"positionals": ["scenario"],
+			"properties": [
+				"children",
+				"childrenAtHigherRate",
+				"dryRun",
+				"filingStatus",
+				"label",
+				"none",
+				"scenario",
+				"tax"
+			],
+			"booleans": ["dryRun", "none"],
+			"values": {
+				"tax": ["th-2026"],
+				"filingStatus": [
+					"single",
+					"married_no_income_spouse",
+					"married_separate",
+					"married_joint",
+					"married_separate_40_1_joint_rest"
+				],
+				"label": []
+			}
+		},
+		"schema": {
+			"positionals": ["path"],
+			"properties": ["path"],
+			"booleans": [],
+			"values": {}
+		},
+		"tx add": {
+			"positionals": [],
+			"properties": [
+				"amount",
+				"date",
+				"dryRun",
+				"externalRef",
+				"from",
+				"memo",
+				"opening",
+				"postings",
+				"project",
+				"to"
+			],
+			"booleans": ["dryRun", "opening"],
+			"values": {}
+		},
+		"tx amend": {
+			"positionals": ["id"],
+			"properties": [
+				"amount",
+				"date",
+				"dryRun",
+				"externalRef",
+				"from",
+				"id",
+				"memo",
+				"opening",
+				"postings",
+				"project",
+				"to",
+				"voidDate"
+			],
+			"booleans": ["dryRun", "opening"],
+			"values": {}
+		},
+		"tx import": {
+			"positionals": ["file"],
+			"properties": ["dryRun", "file", "template"],
+			"booleans": ["dryRun", "template"],
+			"values": {}
+		},
+		"tx list": {
+			"positionals": [],
+			"properties": ["account", "project", "since", "until"],
+			"booleans": [],
+			"values": {}
+		},
+		"tx show": {
+			"positionals": ["id"],
+			"properties": ["id"],
+			"booleans": [],
+			"values": {}
+		},
+		"tx void": {
+			"positionals": ["id"],
+			"properties": ["date", "dryRun", "id"],
+			"booleans": ["dryRun"],
+			"values": {}
+		},
+		"version": {
+			"positionals": [],
+			"properties": [],
+			"booleans": [],
+			"values": {}
+		}
+	}
+}

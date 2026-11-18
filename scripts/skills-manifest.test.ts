@@ -28,11 +28,17 @@ const ROW = { name: "traj", path: "skills/traj", cliRange: ">=0.2.0 <0.3.0" }
 describe("the Skill Manifest", () => {
 	it("publishes exactly the directories under skills/, in install order", () => {
 		expect(manifestProblems(manifest, skillDirectories())).toEqual([])
-		expect(PUBLISHED_SKILLS).toEqual(["traj-onboarding", "traj"])
+		expect(PUBLISHED_SKILLS).toEqual([
+			"traj-onboarding",
+			"traj",
+			"traj-import",
+			"traj-review",
+			"traj-plan",
+		])
 		expect(manifest.formatVersion).toBe(FORMAT_VERSION)
 	})
 
-	it("authors the CLI Range once, and both current Skills expect the same one", () => {
+	it("authors the CLI Range once, and every current Skill expects the same one", () => {
 		for (const row of manifest.skills) expect(row.cliRange).toBe(">=0.2.0 <0.3.0")
 		expect(cliVersionFloor(manifest.skills)).toBe(CLI_VERSION_FLOOR)
 	})

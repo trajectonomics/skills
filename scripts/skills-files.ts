@@ -14,6 +14,15 @@ export const ONBOARDING_SKILL_PATH = "skills/traj-onboarding/SKILL.md"
 /** The first-party operating Skill this repository publishes, and the onboarding Skill installs. */
 export const OPERATING_SKILL_PATH = "skills/traj/SKILL.md"
 
+/** The bank-statement import Recipe. */
+export const IMPORT_SKILL_PATH = "skills/traj-import/SKILL.md"
+
+/** The weekly and monthly check-in Recipe. */
+export const REVIEW_SKILL_PATH = "skills/traj-review/SKILL.md"
+
+/** The financial-independence and what-if Recipe. */
+export const PLAN_SKILL_PATH = "skills/traj-plan/SKILL.md"
+
 /** The networked install check the stubbed runs stand in for. */
 export const INSTALL_CHECK = "scripts/check-skills-install.sh"
 

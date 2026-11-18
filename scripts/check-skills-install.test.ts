@@ -1,4 +1,4 @@
-import { describe, expect, it } from "bun:test"
+import { describe, expect, it, setDefaultTimeout } from "bun:test"
 import { CLI_VERSION_FLOOR_PREFIX } from "./cli-version-floor"
 import { CLI_VERSION_FLOOR } from "./manifest-floor"
 import {
@@ -12,6 +12,12 @@ import {
 	SKILL_VERSION,
 	withoutFloorLine,
 } from "./skills-test-support"
+
+/**
+ * One run stages every manifest Skill and drives the check's stub for each install, so a five-row set
+ * costs several spawns and no longer fits the default five seconds.
+ */
+setDefaultTimeout(30_000)
 
 /** The pin the source is installed from: one 40-character commit, never a branch or a tag. */
 const PINNED = new RegExp(`add \\S+@${PINNED_COMMIT} --skill`)
@@ -53,7 +59,7 @@ describe("the install check", () => {
 		})
 		const { exitCode, output } = runInstallCheck({ source: "repo", manifest: widened })
 		expect(exitCode).not.toBe(0)
-		expect(output).toContain("the manifest lists 3")
+		expect(output).toContain(`the manifest lists ${PUBLISHED_SKILLS.length + 1}`)
 	})
 
 	it("refuses a source that does not resolve the commit it was given", () => {
@@ -87,16 +93,20 @@ describe("the install check", () => {
 	it("fails when the source publishes another Skill set", () => {
 		const narrowed = runInstallCheck({ publishedSkills: ["traj-onboarding"] })
 		expect(narrowed.exitCode).not.toBe(0)
-		expect(narrowed.output).toContain("the source publishes '1' Skills, the manifest lists 2")
+		expect(narrowed.output).toContain(
+			`the source publishes '1' Skills, the manifest lists ${PUBLISHED_SKILLS.length}`,
+		)
 
 		const widened = runInstallCheck({ publishedSkills: [...PUBLISHED_SKILLS, "human-go"] })
 		expect(widened.exitCode).not.toBe(0)
-		expect(widened.output).toContain("the source publishes '3' Skills, the manifest lists 2")
+		expect(widened.output).toContain(
+			`the source publishes '${PUBLISHED_SKILLS.length + 1}' Skills, the manifest lists ${PUBLISHED_SKILLS.length}`,
+		)
 	})
 
 	it("matches a published name exactly, so traj-onboarding does not stand in for traj", () => {
 		const { exitCode, output } = runInstallCheck({
-			publishedSkills: ["traj-onboarding", "something-else"],
+			publishedSkills: PUBLISHED_SKILLS.map((name) => (name === "traj" ? "something-else" : name)),
 		})
 		expect(exitCode).not.toBe(0)
 		expect(output).toContain("the source does not publish traj")

@@ -86,6 +86,7 @@ describe("the traj-onboarding Skill", () => {
 		const ledgerAt = check.indexOf(LEDGER_FILE)
 		expect(ledgerAt).toBeGreaterThan(-1)
 		expect(ledgerAt).toBeLessThan(check.indexOf("**Command line**"))
+		expect(ledgerAt).toBeLessThan(check.indexOf("**Scope and operating skill**"))
 	})
 
 	it("names no traj command of its own, so the surface keeps coming from traj schema", () => {

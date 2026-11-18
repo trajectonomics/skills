@@ -5,11 +5,15 @@
  * Skill names is checked only where the schema publishes that flag's values, so a tax label that
  * appears only in a `description` is not published and naming it fails.
  *
+ * A tax label is read wherever a Skill names one, by `scripts/skill-labels.ts`, not only inside a
+ * call.
+ *
  * It does not decide which unit a given flag or document takes; it fails the unit claims that are
  * wrong for every one of them (`cents`, `pence`, `×100`), which is the invented-unit rule.
  */
 import type { PublishedCommand, PublishedSchema } from "./cli-schema"
 import { calls, camelCase, positionalsOf, resolveCommand } from "./skill-calls"
+import { labelFindings } from "./skill-labels"
 
 /** One place a Skill names something the published CLI does not. */
 export type Finding = { skill: string; span: string; problem: string }
@@ -27,7 +31,8 @@ export function commandSurfaceFindings(
 	schema: PublishedSchema,
 ): Finding[] {
 	const found = calls(source).flatMap((call) => callFindings(skill, call.span, schema))
-	return [...found, ...unitFindings(skill, source)]
+	const labels = labelFindings(source, schema).map((label) => ({ skill, ...label }))
+	return [...found, ...labels, ...unitFindings(skill, source)]
 }
 
 /** A call on the bare command line, which takes the global options and no positionals. */

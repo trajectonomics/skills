@@ -99,6 +99,36 @@ describe("the command surface a Skill may name", () => {
 		])
 	})
 
+	it("fails a tax label named anywhere, not only inside a call", () => {
+		expect(problems("Classify it: `income.section40_1` for employment.\n")).toEqual([
+			'names the label "income.section40_1", which the schema publishes nowhere (line 1)',
+		])
+	})
+
+	it("does not mistake a file this repository ships for a label", () => {
+		expect(
+			problems("The `traj.db` file sits beside `skills.manifest.json` and `~/.traj`.\n"),
+		).toEqual([])
+	})
+
+	it("accepts a label once the schema publishes it as a value", () => {
+		const command = schema.commands["scenario tax"]
+		if (command === undefined) throw new Error("the fixture has no scenario tax")
+		const published: PublishedSchema = {
+			...schema,
+			commands: {
+				...schema.commands,
+				"scenario tax": {
+					...command,
+					values: { ...command.values, label: ["income.section40_1"] },
+				},
+			},
+		}
+		expect(
+			commandSurfaceFindings("traj", "Classify it: `income.section40_1`.\n", published),
+		).toEqual([])
+	})
+
 	it("fails an invented unit claim, on the line it appears", () => {
 		expect(problems("Amounts are in cents.\n")).toEqual([
 			'states the unit "cents", which traj schema publishes nowhere (line 1)',

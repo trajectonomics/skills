@@ -46,3 +46,8 @@ export function positionalsOf(rest: readonly string[], command: PublishedCommand
 	}
 	return positionals
 }
+
+/** Every inline code span in one line, which is where a Skill names what it may run or state. */
+export function codeSpans(line: string): string[] {
+	return [...line.matchAll(/`([^`\n]+)`/g)].map((match) => (match[1] ?? "").trim())
+}

@@ -20,7 +20,7 @@ import {
 	publishedCommand,
 	sameFixture,
 } from "./cli-schema"
-import { repoRoot } from "./skills-files"
+import { repoRoot } from "./repo"
 import { MANIFEST_PATH, parseSkillManifest } from "./skills-manifest"
 
 /** One CLI call, bounded so a download cannot hang CI or a Factory Claim. */

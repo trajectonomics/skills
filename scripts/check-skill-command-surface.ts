@@ -10,8 +10,8 @@ import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { cliFloor } from "./cli-range"
 import type { PublishedSchema } from "./cli-schema"
+import { repoRoot } from "./repo"
 import { commandSurfaceFindings } from "./skill-command-surface"
-import { repoRoot } from "./skills-files"
 import { MANIFEST_PATH, parseSkillManifest } from "./skills-manifest"
 
 const fixtures = process.argv.slice(2)

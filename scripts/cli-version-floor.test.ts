@@ -6,6 +6,7 @@ import {
 	ONBOARDING_SKILL_PATH,
 	OPERATING_SKILL_PATH,
 	read,
+	section,
 	withoutFloorLine,
 } from "./skills-test-support"
 
@@ -20,15 +21,6 @@ function pinnedFloor(skillSource: string): string {
 	throw new Error(
 		`the Skill states the CLI version floor '${stated}', expected ${CLI_VERSION_FLOOR} as '${CLI_VERSION_FLOOR_PREFIX}<version>'`,
 	)
-}
-
-/** The prose under one `## ` heading, line breaks flattened so a test quotes a sentence. */
-function section(skillSource: string, heading: string): string {
-	const start = skillSource.indexOf(`## ${heading}`)
-	if (start < 0) throw new Error(`the Skill has no "${heading}" section`)
-	const next = skillSource.indexOf("\n## ", start + 1)
-	const text = skillSource.slice(start, next < 0 ? skillSource.length : next)
-	return text.replace(/\s+/g, " ")
 }
 
 describe("the CLI Version Floor the traj-onboarding Skill declares", () => {

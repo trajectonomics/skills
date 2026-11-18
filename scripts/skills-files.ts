@@ -1,12 +1,12 @@
 import { readdirSync, readFileSync } from "node:fs"
 import { join } from "node:path"
-import { fileURLToPath } from "node:url"
 import { CLI_VERSION_FLOOR_PREFIX } from "./cli-version-floor"
 import { CLI_VERSION_FLOOR } from "./manifest-floor"
+import { repoRoot } from "./repo"
 import { MANIFEST_PATH, parseSkillManifest, type SkillManifest } from "./skills-manifest"
 
 /** The repository root, so a test reads the files a visitor receives, never a copied fixture. */
-export const repoRoot = fileURLToPath(new URL("..", import.meta.url))
+export { repoRoot }
 
 /** The first-party onboarding Skill this repository publishes. */
 export const ONBOARDING_SKILL_PATH = "skills/traj-onboarding/SKILL.md"

@@ -1,12 +1,12 @@
 import { chmodSync, mkdirSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
+import { repoRoot } from "./repo"
 import {
 	ONBOARDING_SKILL_PATH,
 	OPERATING_SKILL_PATH,
 	PINNED_COMMIT,
 	PUBLISHED_SKILLS,
 	read,
-	repoRoot,
 } from "./skills-files"
 import type { SkillPin } from "./skills-lock"
 import { MANIFEST_PATH } from "./skills-manifest"
@@ -43,8 +43,8 @@ export type CheckSandbox = {
 		STUB_GH_LOG: string
 		STUB_MANIFEST: string
 		STUB_SKILLS: string
-		STUB_GIT_SHA: string
 		STUB_LOCK_OVERRIDES: string
+		STUB_GIT_SHA?: string
 		STUB_EXTRA_SKILL?: string
 		STUB_AGENT_DIR?: string
 	}
@@ -60,7 +60,6 @@ export function prepareSandbox(sandbox: string, fixture: InstallCheckFixture): C
 		STUB_GH_LOG: join(sandbox, "gh.log"),
 		STUB_MANIFEST: join(sandbox, "manifest.json"),
 		STUB_SKILLS: skills,
-		STUB_GIT_SHA: PINNED_COMMIT,
 		STUB_LOCK_OVERRIDES: JSON.stringify(fixture.lockOverrides ?? {}),
 	}
 	mkdirSync(join(sandbox, "bin"))

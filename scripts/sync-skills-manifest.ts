@@ -6,12 +6,9 @@
  */
 import { readFileSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
-import { fileURLToPath } from "node:url"
+import { repoRoot } from "./repo"
 import { frontmatterWrites } from "./skill-metadata"
 import { MANIFEST_PATH, parseSkillManifest } from "./skills-manifest"
-
-/** The repository root, where the manifest and the Skills it names live. */
-const repoRoot = fileURLToPath(new URL("..", import.meta.url))
 
 if (import.meta.main) {
 	const manifest = parseSkillManifest(readFileSync(join(repoRoot, MANIFEST_PATH), "utf8"))

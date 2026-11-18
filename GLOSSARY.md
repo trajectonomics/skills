@@ -15,3 +15,7 @@ A rule or condition that must hold true across all state transitions in this sys
 
 ### CLI Version Floor
 The oldest `@trajectonomics/cli` release whose command surface the operating Skill's `description` assumes. The onboarding Skill states it once and discloses it when the command line on the machine is older, instead of handing the conversation over silently.
+
+### Ledger File
+The SQLite file at `${TRAJ_HOME:-~/.traj}/traj.db`, whose presence means the ledger has been opened on this machine at least once, and never that it holds data: `traj init` and every store-opening command create it empty on the way. The onboarding Skill tests for it and hands the read to the operating Skill.
+_Avoid_: database, data directory

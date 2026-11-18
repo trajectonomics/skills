@@ -18,6 +18,7 @@ import {
 	globalOptions,
 	type PublishedSchema,
 	publishedCommand,
+	sameFixture,
 } from "./cli-schema"
 import { repoRoot } from "./skills-files"
 import { MANIFEST_PATH, parseSkillManifest } from "./skills-manifest"
@@ -78,7 +79,7 @@ if (import.meta.main) {
 		const path = args[compare + 1]
 		if (path === undefined) throw new Error("--compare needs a fixture path")
 		const checkedIn = readFileSync(path, "utf8")
-		if (checkedIn !== fixtureJson(schema)) {
+		if (!sameFixture(checkedIn, fixtureJson(schema))) {
 			throw new Error(`${path} has drifted from @trajectonomics/cli@${floor}: regenerate it`)
 		}
 		console.log(`checked ${path} against @trajectonomics/cli@${floor}`)

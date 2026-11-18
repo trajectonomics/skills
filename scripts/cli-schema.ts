@@ -84,3 +84,24 @@ export function fixtureJson(schema: PublishedSchema): string {
 		"\t",
 	)}\n`
 }
+
+/** Whether two fixture files carry the same surface, whatever whitespace a formatter left. */
+export function sameFixture(one: string, other: string): boolean {
+	return canonical(one) === canonical(other)
+}
+
+/** A fixture as one string with its keys sorted, so a formatting change is not a drift. */
+function canonical(json: string): string {
+	return JSON.stringify(sortKeys(JSON.parse(json)))
+}
+
+/** Every object's keys in a fixed order, recursively. */
+function sortKeys(value: unknown): unknown {
+	if (Array.isArray(value)) return value.map(sortKeys)
+	if (typeof value !== "object" || value === null) return value
+	return Object.fromEntries(
+		Object.keys(value)
+			.sort()
+			.map((key) => [key, sortKeys((value as Record<string, unknown>)[key])]),
+	)
+}

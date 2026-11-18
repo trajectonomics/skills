@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test"
-import type { PublishedSchema } from "./cli-schema"
+import { type PublishedSchema, sameFixture } from "./cli-schema"
 import { calls, camelCase, resolveCommand } from "./skill-calls"
 import { commandSurfaceFindings } from "./skill-command-surface"
 import { manifest, OPERATING_SKILL_PATH, read } from "./skills-test-support"
@@ -32,6 +32,14 @@ describe("reading the calls a Skill names", () => {
 		expect(resolveCommand(["invent"], schema)).toBeNull()
 		expect(camelCase("dry-run")).toBe("dryRun")
 		expect(camelCase("filing-status")).toBe("filingStatus")
+	})
+})
+
+describe("the fixture the offline half reads", () => {
+	it("is the surface the checked-in file carries, whatever a formatter did to it", () => {
+		const checkedIn = read("scripts/fixtures/cli-schema-0.2.0.json")
+		expect(sameFixture(checkedIn, JSON.stringify(schema))).toBe(true)
+		expect(sameFixture(checkedIn, JSON.stringify({ ...schema, version: "0.3.0" }))).toBe(false)
 	})
 })
 

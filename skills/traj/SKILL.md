@@ -39,8 +39,9 @@ All state is one directory, `~/.traj` on every platform, holding `traj.db` and a
 1. `traj schema --json` lists every command with a one-line summary, plus the error registry: each `code` with its `exitCode` class and message.
 2. `traj schema <command> --json` gives that command's flags, its input and output JSON Schema, the document schema it accepts when it has one, and the error codes it can raise. Do this before the first use of a command, every session.
 3. `traj help <command>` adds worked examples.
+4. A command that takes a document may print a template: `traj scenario apply --template` prints a Scenario, `traj tx import --template` prints the CSV header, and where the schema stops at its `schemaVersion`, the template is where the fields are.
 
-Take every flag, required field, document shape and enum value from that output, not from memory and not from this document. **Never invent a command, a flag, a field or an enum value.** When the tool does not publish it, say so instead of guessing: a guess that happens to run is worse than a refusal, because the next one will not.
+Take every flag, required field, document shape and enum value from that output, not from memory and not from this document. **Never invent a command, a flag, a field or an enum value.** When the tool does not publish it, say so instead of guessing: a guess that happens to run is worse than a refusal, because the next one will not. A page about `traj` is depth, never the arbiter: when it and the release disagree, the release wins.
 
 ## The contract
 

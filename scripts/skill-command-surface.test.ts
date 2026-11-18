@@ -143,6 +143,11 @@ describe("the command surface a Skill may name", () => {
 		const source = read(OPERATING_SKILL_PATH)
 		const named = calls(source).map((call) => call.span)
 		expect(named).toContain("traj schema --json")
-		expect(named.filter((call) => call.startsWith("traj scenario"))).toEqual([])
+		expect(named.filter((call) => call.startsWith("traj scenario"))).toEqual([
+			"traj scenario apply --template",
+		])
+		expect(named.filter((call) => call.startsWith("traj tx"))).toEqual([
+			"traj tx import --template",
+		])
 	})
 })

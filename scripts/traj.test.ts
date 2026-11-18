@@ -44,6 +44,17 @@ describe("the traj operating Skill", () => {
 		expect(body).toContain("not from memory and not from this document")
 	})
 
+	it("starts a document from the release's own template, and lets the release outrank a page", () => {
+		for (const call of ["traj scenario apply --template", "traj tx import --template"])
+			expect(body).toContain(call)
+		expect(body).toContain(
+			"where the schema stops at its `schemaVersion`, the template is where the fields are",
+		)
+		expect(body).toContain(
+			"A page about `traj` is depth, never the arbiter: when it and the release disagree, the release wins.",
+		)
+	})
+
 	it("never invents a command, a flag, a field or an enum value", () => {
 		expect(body).toContain("**Never invent a command, a flag, a field or an enum value.**")
 		expect(body).toContain("a guess that happens to run is worse than a refusal")

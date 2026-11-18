@@ -74,12 +74,28 @@ describe("the traj operating Skill", () => {
 		expect(body).toContain("is plain text rather than an envelope")
 	})
 
-	it("keeps money a decimal string in the unit the person's, never restated", () => {
-		expect(body).toContain("Money is a decimal string on the wire")
-		expect(body).toContain("keep the unit the user's")
+	it("states the money unit once per place, so no place invites a hundredfold error", () => {
 		expect(body).toContain(
-			"Restating one amount in a different unit is a second number you invented",
+			'Money is a decimal string at the currency\'s scale, with its currency (`"120.50"`), ' +
+				"everywhere except inside a Scenario document: an amount you pass in a flag, a CSV " +
+				"`amount` cell, a transaction document, and every amount a ledger, report or projection " +
+				"result prints.",
 		)
+		expect(body).toContain(
+			"Inside a Scenario document — one you apply or read back, and the `--set` overrides that " +
+				"change it — money is an integer of minor units, so `100000` is 1,000.00 THB, which is " +
+				"that document's form of the same amount and not a restatement.",
+		)
+		expect(body).toContain("`traj schema` is the authority wherever it states a unit.")
+		expect(body).toContain(
+			"Keep the unit the user's: restating one amount in a different unit is a second number " +
+				"you invented.",
+		)
+	})
+
+	it("retires both phrases that invited a hundredfold error", () => {
+		expect(body).not.toContain("decimal string on the wire")
+		expect(body).not.toContain("keep both ends integer")
 	})
 
 	it("keeps dates Gregorian YYYY-MM-DD, converting a Buddhist Era year", () => {

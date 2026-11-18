@@ -1,10 +1,16 @@
 /**
- * The [CLI Version Floor](../GLOSSARY.md) the onboarding Skill declares, and the reader for the
- * one line that states it. `scripts/check-traj-onboarding-install.sh` pins the same number.
+ * The [CLI Version Floor](../GLOSSARY.md): the lower bound of the operating Skill's CLI Range in the
+ * [Skill Manifest](../GLOSSARY.md), which is where the number is authored. `scripts/check-skills-install.sh`
+ * reads the same manifest, and the tests compare the number with the line the onboarding Skill states.
  */
+import { readFileSync } from "node:fs"
+import { cliVersionFloor } from "./cli-range"
+import { MANIFEST_PATH, parseSkillManifest } from "./skills-manifest"
 
-/** The oldest `@trajectonomics/cli` release whose command surface the operating Skill assumes. */
-export const CLI_VERSION_FLOOR = "0.2.0"
+/** The oldest `@trajectonomics/cli` release whose command surface a published Skill assumes. */
+export const CLI_VERSION_FLOOR = cliVersionFloor(
+	parseSkillManifest(readFileSync(new URL(`../${MANIFEST_PATH}`, import.meta.url), "utf8")).skills,
+)
 
 /** The fixed prefix of the Skill's floor line; the version follows it in backticks. */
 export const CLI_VERSION_FLOOR_PREFIX = "The CLI version floor is "

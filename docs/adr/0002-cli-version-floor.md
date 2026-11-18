@@ -24,5 +24,8 @@ number can be pinned by both the install check and the tests.
 - The floor may legitimately run ahead of `npm dist-tags.latest`. A person below it is told, not
   blocked, because recording, reading and Scenarios work on the older command line; setup still
   finishes.
-- Raising the floor is a one-line edit in the onboarding Skill, and both pins — the install check and
-  the test side — fail until they state the same number.
+- Raising the floor is one row's `cliRange` in the [Skill Manifest](../GLOSSARY.md) that
+  [ADR 0003](./0003-customer-skills-publish-from-this-repository.md) records. The onboarding Skill's
+  floor line, each Skill's frontmatter copy and the install check all derive from that one row —
+  `bun run skills:sync` rewrites the frontmatter copies — so raising the floor is one edit and the
+  checks fail until every derived place states the same number.

@@ -1,0 +1,15 @@
+{
+	"formatVersion": 1,
+	"skills": [
+		{
+			"name": "traj-onboarding",
+			"path": "skills/traj-onboarding",
+			"cliRange": ">=0.2.0 <0.3.0"
+		},
+		{
+			"name": "traj",
+			"path": "skills/traj",
+			"cliRange": ">=0.2.0 <0.3.0"
+		}
+	]
+}

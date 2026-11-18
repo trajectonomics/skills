@@ -10,7 +10,7 @@ import {
 	read,
 	SKILL_PATH,
 	withoutFloorLine,
-} from "./traj-onboarding-test-support"
+} from "./skills-test-support"
 
 const skill = read(SKILL_PATH)
 /** The sentence both rules that end setup must count. */
@@ -35,9 +35,13 @@ function section(skillSource: string, heading: string): string {
 }
 
 describe("the CLI Version Floor the traj-onboarding Skill declares", () => {
-	it("states the floor this repository pins, once", () => {
+	it("states the floor this repository pins, in one line and no other", () => {
 		expect(pinnedFloor(skill)).toBe(CLI_VERSION_FLOOR)
-		expect(skill.split(CLI_VERSION_FLOOR)).toHaveLength(2)
+		const floorLines = skill
+			.split(/\r?\n/)
+			.filter((line) => line.startsWith(CLI_VERSION_FLOOR_PREFIX))
+		expect(floorLines).toHaveLength(1)
+		expect(floorLines[0]).toStartWith(FLOOR_LINE)
 	})
 
 	it("states it in the onboarding Skill alone, never a second time in the operating Skill", () => {

@@ -40,6 +40,7 @@
 		"format": "biome check --write .",
 		"check": "bun run lint && bun run typecheck && bun run test && bun run build && bun run lint:package",
 		"lint:package": "publint --strict && attw --pack . --profile node16",
+		"skills:sync": "bun scripts/sync-skills-manifest.ts",
 		"skills:check": "bunx skills@latest check",
 		"skills:update": "bunx skills@latest update"
 	},

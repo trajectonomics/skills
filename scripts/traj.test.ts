@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test"
 import { skillFrontmatter } from "./skill-frontmatter"
-import { OPERATING_SKILL_PATH, read } from "./traj-onboarding-test-support"
+import { OPERATING_SKILL_PATH, read } from "./skills-test-support"
 
 /**
  * Static checks on the first-party operating Skill, `traj`, which publishes from this repository and

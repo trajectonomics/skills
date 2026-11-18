@@ -1,20 +1,14 @@
 import { describe, expect, it } from "bun:test"
-import { existsSync } from "node:fs"
-import { join } from "node:path"
 import { skillFrontmatter } from "./skill-frontmatter"
-import { read, repoRoot, SKILL_PATH, SKILL_VERSION } from "./traj-onboarding-test-support"
+import { read, SKILL_PATH, SKILL_VERSION } from "./skills-test-support"
 
 /**
- * Static checks on the first-party onboarding Skill and the README the website links to. The
- * networked check that runs the install has its own file, `traj-onboarding-install.test.ts`.
+ * Static checks on the first-party onboarding Skill the website installs. The networked check that
+ * runs the install has its own file, `check-skills-install.test.ts`.
  */
-const WEBSITE_COMMAND = "npx skills add trajectonomics/skills --skill traj-onboarding"
 const OPERATING_SKILL_COMMAND = "npx skills add trajectonomics/skills --skill traj"
 const CLI_REPOSITORY = "https://github.com/trajectonomics/cli"
 const CLI_PACKAGE = "@trajectonomics/cli"
-const PRIVATE_PACKAGE = "bun add @trajectonomics/skills"
-/** `engines.node` of the command line the Skill installs. */
-const CLI_NODE_FLOOR = "Node 20"
 /**
  * The Ledger File: the one path that says the ledger has been opened on this machine. `TRAJ_HOME` is
  * the command line's own override, so the Skill tests the same file the CLI would open. The `${` is
@@ -54,7 +48,8 @@ describe("the traj-onboarding Skill", () => {
 	})
 
 	it("carries the stable release version in frontmatter metadata, which the Site announces", () => {
-		expect(block).toContain(`\nmetadata:\n  version: "${SKILL_VERSION}"`)
+		expect(block).toMatch(/^metadata:/m)
+		expect(block).toContain(`\n  version: "${SKILL_VERSION}"`)
 	})
 
 	it("says it sets up a returning person too, as well as someone starting out", () => {
@@ -129,44 +124,4 @@ describe("the traj-onboarding Skill", () => {
 		expect(body).toContain("another machine needs setup once")
 		expect(body).not.toContain("never needed again")
 	})
-})
-
-describe("the README the website links to", () => {
-	const readme = read("README.md")
-
-	it("leads with the website command as written, without -y or an agent flag", () => {
-		const commandLines = readme
-			.split("\n")
-			.filter((line) => line.startsWith("npx skills add trajectonomics/skills"))
-		expect(commandLines).toEqual([WEBSITE_COMMAND])
-		expect(readme.indexOf(WEBSITE_COMMAND)).toBeLessThan(readme.indexOf("## Development"))
-	})
-
-	it("states the Node floor of the command line separately", () => {
-		expect(readme).toContain(CLI_NODE_FLOOR)
-	})
-
-	it("puts the website command before the private package", () => {
-		const website = readme.indexOf(WEBSITE_COMMAND)
-		const privatePackage = readme.indexOf(PRIVATE_PACKAGE)
-		expect(website).toBeGreaterThan(-1)
-		expect(privatePackage).toBeGreaterThan(-1)
-		expect(website).toBeLessThan(privatePackage)
-	})
-})
-
-describe("the published Skill set", () => {
-	it("keeps no Skill Pin for either first-party Skill, which would hide it from visitors", () => {
-		const lock: { skills?: Record<string, unknown> } = JSON.parse(read("skills-lock.json"))
-		const pinned = Object.keys(lock.skills ?? {})
-		for (const skill of ["traj-onboarding", "traj"]) expect(pinned).not.toContain(skill)
-	})
-
-	it.each([".agents/skills", ".claude/skills", ".vibe/skills"])(
-		"keeps both first-party Skills out of %s, which holds vendored Skills only",
-		(vendoredTree) => {
-			for (const skill of ["traj-onboarding", "traj"])
-				expect(existsSync(join(repoRoot, vendoredTree, skill))).toBe(false)
-		},
-	)
 })

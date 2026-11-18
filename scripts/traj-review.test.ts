@@ -60,15 +60,15 @@ describe("the traj-review Skill", () => {
 
 	it("shows refunds apart from gross spend, never netted silently", () => {
 		const step = section(body, "Step 4: refunds apart from gross spend")
-		expect(step).toContain("A refund is money returned to an expense account")
+		expect(step).toContain("A refund is income returned to an expense account")
 		expect(step).toContain("the opposite sign")
 		expect(step).toContain("never net a refund into the spending silently")
 	})
 
 	it("states exactly one unusual rule, prints it, and applies it with its floor and baseline", () => {
 		const step = section(body, "Step 5: unusual is one fixed rule, printed with the review")
-		expect(step).toContain("1.5 times the median of its up to three previous periods")
-		expect(step).toContain("1,000 THB")
+		expect(step).toContain("exceeds 1.5 times the median of its up to three")
+		expect(step).toContain("previous periods **and** exceeds 1,000 THB")
 		expect(step).toContain("at least two prior periods")
 		expect(step).toContain("no baseline yet")
 		expect(step).toContain("both conditions must hold")

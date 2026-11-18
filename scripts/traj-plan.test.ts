@@ -72,7 +72,7 @@ describe("the traj-plan Skill", () => {
 		expect(step).toContain("never arithmetic of your own")
 		expect(step).toContain("refuse it plainly")
 		expect(step).toContain("not presented as the plan")
-		expect(step).toContain("never carry a field name from memory")
+		expect(step).toContain("carry no field name with you")
 	})
 
 	it("discloses the estimate, the unmodelled facts, the cannot-do list and every as-of", () => {

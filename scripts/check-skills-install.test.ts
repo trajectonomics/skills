@@ -1,4 +1,4 @@
-import { describe, expect, it } from "bun:test"
+import { describe, expect, it, setDefaultTimeout } from "bun:test"
 import { CLI_VERSION_FLOOR_PREFIX } from "./cli-version-floor"
 import { CLI_VERSION_FLOOR } from "./manifest-floor"
 import {
@@ -12,6 +12,12 @@ import {
 	SKILL_VERSION,
 	withoutFloorLine,
 } from "./skills-test-support"
+
+/**
+ * One run stages every manifest Skill and drives the check's stub for each install, so a five-row set
+ * costs several spawns and no longer fits the default five seconds.
+ */
+setDefaultTimeout(30_000)
 
 /** The pin the source is installed from: one 40-character commit, never a branch or a tag. */
 const PINNED = new RegExp(`add \\S+@${PINNED_COMMIT} --skill`)

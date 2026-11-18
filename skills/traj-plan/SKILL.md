@@ -48,8 +48,8 @@ Run `traj fi --as-of <as-of> --horizon <horizon> --scenario <scenario> --json`, 
 - whether it is reachable at all: when the result says it is not reached within the horizon, say
   that, with the horizon, and do not extend the horizon silently to produce a date;
 - the 25-times-annual-spending figure **only** as a labelled rule of thumb — the result itself
-  labels that reference — and never as the FI date. The rule of thumb is not a projection, and the
-  date is not the rule of thumb.
+  labels that reference — and never as the FI date. The rule of thumb is not the projection's date,
+  and the date does not carry it.
 
 A figure without its horizon and assumptions is one the person will read as unconditional.
 
@@ -74,8 +74,8 @@ say that this release of `traj` cannot express it, and leave the number missing.
 plan that already runs out of money or cannot fund its contributions is not presented as the plan:
 say what the baseline does first, then the difference, in those words.
 
-Turning a sentence into a document field is the schema's job. Read the field from the schema, start
-from the release's template, and never carry a field name from memory.
+Turning their sentence into a document field is a reading of the schema, never an act of memory:
+read the field from the schema, start from the release's template, and carry no field name with you.
 
 ## What every answer discloses
 
@@ -85,7 +85,7 @@ Every plan answer carries these, in plain words:
   nothing here is a tax return.
 - **What is not modelled**, named for the question asked — the facts the Scenario does not carry.
 - **What `traj` cannot do in this release**: it cannot produce a tax figure yet, it cannot hold a
-  currency other than THB, and it has no USD support; it has no Monte Carlo, no return shock, and no
+  currency other than THB (so no USD), and it has no Monte Carlo, no return shock, and no
   "retire at 55" — a sentence like that is refused, not approximated. Leave the missing number
   missing.
 - **The as-of every figure was read at, and whether tax is in it.** In this release tax is not.

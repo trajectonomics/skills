@@ -60,8 +60,8 @@ release it is not.
 
 ## Step 4: refunds apart from gross spend
 
-A refund is money returned to an expense account: an entry on that account with the opposite sign to
-the spending. Read both from the period's entries.
+A refund is income returned to an expense account — money coming back on a purchase — and it is an
+entry on that account with the opposite sign to the spending. Read both from the period's entries.
 
 Show gross spend and refunds apart, each with its own total, and never net a refund into the
 spending silently: a refunded purchase that is folded into gross spend hides both facts.
@@ -71,8 +71,8 @@ spending silently: a refunded purchase that is folded into gross spend hides bot
 The review prints this rule and then applies it, every time, so the person can see how "unusual" was
 decided:
 
-> An expense account is unusual when its period total exceeds 1.5 times the median of its up to three previous periods
-> **and** exceeds 1,000 THB.
+> An expense account is unusual when its period total exceeds 1.5 times the median of its up to three
+> previous periods **and** exceeds 1,000 THB.
 
 The details that make it one rule rather than a judgement:
 

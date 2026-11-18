@@ -38,8 +38,9 @@ Save owner attention:
 - **Trajectonomics Internal Skills (`trajectonomics/internal-skills`)**: Organization-specific workflow including `/pick-the-issue` to discover unblocked GitHub issues not currently handled by active T3 Code sessions and route them into the `ask-matt` framework.
 - **First-party customer Skills (`skills/`)**: the set this repository publishes is declared in
   `skills.manifest.json` at the repository root — one row per Skill, naming its directory and the CLI
-  Range it expects, in install order. Today `traj-onboarding` sets a person up on `traj`, and `traj`
-  operates the command line afterwards; a seventh Skill is one row and one checked set. Every row
+  Range it expects, in install order. Today `traj-onboarding` sets a person up on `traj`, `traj`
+  operates the command line afterwards, and `traj-import`, `traj-review` and `traj-plan` carry the
+  bank-import, check-in and planning Recipes; another Skill is one row and one checked set. Every row
   publishes from this repository and is installed from it, never from `internal-skills`
   ([ADR 0003](./docs/adr/0003-customer-skills-publish-from-this-repository.md)).
 

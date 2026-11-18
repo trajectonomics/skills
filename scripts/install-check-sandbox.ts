@@ -1,13 +1,7 @@
 import { chmodSync, mkdirSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
 import { repoRoot } from "./repo"
-import {
-	ONBOARDING_SKILL_PATH,
-	OPERATING_SKILL_PATH,
-	PINNED_COMMIT,
-	PUBLISHED_SKILLS,
-	read,
-} from "./skills-files"
+import { manifest, PINNED_COMMIT, PUBLISHED_SKILLS, read } from "./skills-files"
 import type { SkillPin } from "./skills-lock"
 import { MANIFEST_PATH } from "./skills-manifest"
 import { stubList } from "./stub-npx"
@@ -75,19 +69,21 @@ export function prepareSandbox(sandbox: string, fixture: InstallCheckFixture): C
 	return { env, args: sourceArgs(fixture) }
 }
 
-/** The two Skills a source publishes, each as the fixture's copy of it, or as a dead install. */
+/** Every Skill the manifest publishes, at the fixture's copy of the two it can replace. */
 function writeSkills(skills: string, fixture: InstallCheckFixture): void {
-	const copies = [
-		["traj-onboarding", fixture.onboardingSkill ?? read(ONBOARDING_SKILL_PATH)],
-		[
-			"traj",
-			fixture.operatingSkill === undefined ? read(OPERATING_SKILL_PATH) : fixture.operatingSkill,
-		],
-	] as const
-	for (const [name, source] of copies) {
-		mkdirSync(join(skills, name), { recursive: true })
-		if (source !== null) writeFileSync(join(skills, name, "SKILL.md"), source)
+	for (const row of manifest.skills) {
+		const source = copyOf(row.name, fixture)
+		mkdirSync(join(skills, row.name), { recursive: true })
+		if (source !== null) writeFileSync(join(skills, row.name, "SKILL.md"), source)
 	}
+}
+
+/** One Skill's source: the fixture's replacement where it names one, else what this checkout ships. */
+function copyOf(name: string, fixture: InstallCheckFixture): string | null {
+	if (name === "traj-onboarding" && fixture.onboardingSkill !== undefined)
+		return fixture.onboardingSkill
+	if (name === "traj" && fixture.operatingSkill !== undefined) return fixture.operatingSkill
+	return read(`skills/${name}/SKILL.md`)
 }
 
 /** The argument the run passes the check: this checkout, or a repository pinned to its commit. */

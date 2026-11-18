@@ -19,10 +19,12 @@ contract, was pinned by no check in the repository that shipped it.
 
 1. A Skill a customer runs publishes from `trajectonomics/skills`. The set this repository publishes
    is an allowlist in `skills.manifest.json` at the repository root: one row per Skill, naming its
-   directory and the [CLI Range](../GLOSSARY.md) it expects, in install order. Today the rows are
-   `traj-onboarding` and `traj`. A row with no `skills/<name>` directory, a directory with no row, a
+   directory and the [CLI Range](../GLOSSARY.md) it expects, in install order. The rows are the
+   Customer Skills this repository publishes: `traj-onboarding`, the operating Skill `traj`, and the
+   workflow Skills that carry a
+   [Recipe](../GLOSSARY.md#recipe). A row with no `skills/<name>` directory, a directory with no row, a
    duplicate name or path, and a row whose range does not parse each fail `bun run check`, so
-   publishing a seventh Customer Skill is one row and one checked set rather than an edit here.
+   publishing another Customer Skill is one row and one checked set rather than an edit here.
 2. `traj-onboarding` installs the operating Skill from the same source as itself, with
    `npx skills add trajectonomics/skills --skill traj`.
 3. `trajectonomics/internal-skills` keeps only the Skills an internal session runs. Its copy of

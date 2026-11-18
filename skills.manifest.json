@@ -10,6 +10,21 @@
 			"name": "traj",
 			"path": "skills/traj",
 			"cliRange": ">=0.2.0 <0.3.0"
+		},
+		{
+			"name": "traj-import",
+			"path": "skills/traj-import",
+			"cliRange": ">=0.2.0 <0.3.0"
+		},
+		{
+			"name": "traj-review",
+			"path": "skills/traj-review",
+			"cliRange": ">=0.2.0 <0.3.0"
+		},
+		{
+			"name": "traj-plan",
+			"path": "skills/traj-plan",
+			"cliRange": ">=0.2.0 <0.3.0"
 		}
 	]
 }

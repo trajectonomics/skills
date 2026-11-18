@@ -83,7 +83,9 @@ describe("the traj-onboarding Skill", () => {
 
 	it("checks the Ledger File first, before the two install checks run", () => {
 		const check = section(body, "Check what is already done")
-		expect(check.indexOf(LEDGER_FILE)).toBeLessThan(check.indexOf("**Command line**"))
+		const ledgerAt = check.indexOf(LEDGER_FILE)
+		expect(ledgerAt).toBeGreaterThan(-1)
+		expect(ledgerAt).toBeLessThan(check.indexOf("**Command line**"))
 	})
 
 	it("names no traj command of its own, so the surface keeps coming from traj schema", () => {

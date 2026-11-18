@@ -130,8 +130,8 @@ Then report what it found before you ask anything, in one of three ways:
 their goal. Then read the `traj` skill at the `path` the list command reported, and follow it for the
 rest of this conversation.
 
-Tell them, in every open, that a new session loads that skill whenever they talk about their money, so
-another machine needs setup once.
+Tell them, in every open, that a new session loads that skill whenever they talk about their money,
+and that another machine needs setup once.
 
 Done when their answer is in hand — given directly, or confirmed against the Ledger File — or, where
 the read failed, the failure has been reported and the conversation handed over; a below-floor command

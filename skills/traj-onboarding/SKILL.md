@@ -112,8 +112,8 @@ and that nothing is installed or downloaded to fix it. Setup still finishes.
   command surface changes as features land.
 
 **A ledger file already exists.** Read the `traj` skill at the `path` the list command reported, and
-follow it to read the ledger, with the commands and flags `traj schema` gives and none named here.
-Then report what it found before you ask anything, in one of three ways:
+follow it to read the ledger, taking every command and flag from the schema and none from this
+document. Then report what it found before you ask anything, in one of three ways:
 
 - **It holds rows.** Say what the ledger holds, in the names and numbers the read returned, and ask
   one question: does that match, and what is their goal now. The situation half is the ledger's to
@@ -130,8 +130,8 @@ Then report what it found before you ask anything, in one of three ways:
 their goal. Then read the `traj` skill at the `path` the list command reported, and follow it for the
 rest of this conversation.
 
-Tell them, in every open, that a new session loads that skill whenever they talk about their money,
-and that another machine needs setup once.
+Tell them, in every open, that a new session loads that skill by itself whenever they talk about their
+money, and that another machine needs setup once.
 
 Done when their answer is in hand — given directly, or confirmed against the Ledger File — or, where
 the read failed, the failure has been reported and the conversation handed over; a below-floor command

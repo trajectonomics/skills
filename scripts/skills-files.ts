@@ -1,20 +1,24 @@
 import { readdirSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 import { fileURLToPath } from "node:url"
-import { CLI_VERSION_FLOOR, CLI_VERSION_FLOOR_PREFIX } from "./cli-version-floor"
+import { CLI_VERSION_FLOOR_PREFIX } from "./cli-version-floor"
+import { CLI_VERSION_FLOOR } from "./manifest-floor"
 import { MANIFEST_PATH, parseSkillManifest, type SkillManifest } from "./skills-manifest"
 
 /** The repository root, so a test reads the files a visitor receives, never a copied fixture. */
 export const repoRoot = fileURLToPath(new URL("..", import.meta.url))
 
 /** The first-party onboarding Skill this repository publishes. */
-export const SKILL_PATH = "skills/traj-onboarding/SKILL.md"
+export const ONBOARDING_SKILL_PATH = "skills/traj-onboarding/SKILL.md"
 
 /** The first-party operating Skill this repository publishes, and the onboarding Skill installs. */
 export const OPERATING_SKILL_PATH = "skills/traj/SKILL.md"
 
 /** The networked install check the stubbed runs stand in for. */
 export const INSTALL_CHECK = "scripts/check-skills-install.sh"
+
+/** The one install command the Site prints, which the README and the onboarding Skill both name. */
+export const WEBSITE_COMMAND = "npx skills add trajectonomics/skills --skill traj-onboarding"
 
 /** The onboarding Skill's stable version: the repository tag, and the version the Site announces. */
 export const SKILL_VERSION = "0.1.0"

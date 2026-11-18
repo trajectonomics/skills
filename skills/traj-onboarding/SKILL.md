@@ -97,7 +97,7 @@ That is the command the Site prints. What this step installs is the published se
 copy came from.
 
 **Find the pin.** `skills@1.9.0` records, in `skills-lock.json`, the `commit` it installed this
-skill from. Read this skill's own entry and that `commit`; it is the pin. Never install from `main`:
+skill from. Read this skill's own entry and that `commit`: everything below installs from it. Never install from `main`:
 a branch moves, and a person's setup must not.
 
 **Read the set at that commit.** Fetch `skills.manifest.json` from `trajectonomics/skills` at the

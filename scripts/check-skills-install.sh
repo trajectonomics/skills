@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Proves the published set. Every Skill the Skill Manifest lists is installed by explicit `--skill`
 # from one 40-character commit, in manifest order, on skills@1.9.0, which records the commit; and the
-# check fails on a Skill outside the manifest, on a lock entry that disagrees (source, commit or hash
+# check fails on a Skill outside the manifest, on a Skill Pin that disagrees (source, commit or hash
 # recomputed from the installed files), on a stray `agent/` skills tree, and on a published Skill
 # installed from another source.
 #
@@ -256,6 +256,6 @@ if ! (cd "$REPO_ROOT" && bun scripts/check-skills-lock.ts "$SCRATCH/project" "$S
 	fail "skills-lock.json does not match the set the manifest publishes"
 fi
 
-echo "PASS: the $ROW_COUNT Skills the manifest lists install from one commit, the website command installs exactly $ONBOARDING_SKILL, and every lock entry agrees with the installed files."
+echo "PASS: the $ROW_COUNT Skills the manifest lists install from one commit, the website command installs exactly $ONBOARDING_SKILL, and every Skill Pin agrees with the installed files."
 echo "      Source: $INSTALL_SOURCE"
 echo "      Commit: $INSTALLED"

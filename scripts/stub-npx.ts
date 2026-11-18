@@ -4,7 +4,8 @@
  * against `trajectonomics/skills` before a pull request that touches `skills/`.
  *
  * It stands in for `skills@1.9.0`: `--list` prints the published set, and an install copies the
- * Skill's `SKILL.md` into the two agent trees and records the lock entry the CLI would record, hash
+ * Skill's `SKILL.md` into the two agent trees and records the [Skill Pin](../GLOSSARY.md) the CLI would
+ * record, hash
  * included. The `STUB_*` variables are fixtures, not behaviour: each makes the CLI leave behind one
  * kind of wrong state for the check to catch.
  */
@@ -33,7 +34,7 @@ function install(args: readonly string[]): void {
 	if (at < 0 || skill === undefined) throw new Error(`stub npx: no --skill: ${args.join(" ")}`)
 	for (const tree of [".agents/skills", ".claude/skills"]) copySkill(tree, skill)
 	if (process.env["STUB_AGENT_DIR"]) copySkill("agent/skills", skill)
-	const source = only(args, "add")
+	const source = valueAfter(args, "add")
 	const skills = { ...readLock().skills, [skill]: entry(source, skill) }
 	const extra = process.env["STUB_EXTRA_SKILL"]
 	writeFileSync("skills-lock.json", `${JSON.stringify({ version: 2, skills }, null, 2)}\n`)
@@ -56,7 +57,7 @@ function installOutside(skill: string, source: string): void {
 	writeFileSync("skills-lock.json", `${JSON.stringify({ version: 2, skills }, null, 2)}\n`)
 }
 
-/** One lock entry: the source and commit the install names, and the hash of what it left. */
+/** One [Skill Pin](../GLOSSARY.md): the source and commit the install names, and the hash it left. */
 function entry(source: string, skill: string): Record<string, unknown> {
 	const sha = commitOf(source)
 	return {
@@ -79,7 +80,7 @@ function readLock(): { skills: Record<string, Record<string, unknown>> } {
 }
 
 /** The argument after `flag`, which is the source or the Skill a call names. */
-function only(args: readonly string[], flag: string): string {
+function valueAfter(args: readonly string[], flag: string): string {
 	const value = args[args.indexOf(flag) + 1]
 	if (args.indexOf(flag) < 0 || value === undefined) throw new Error(`stub npx: no ${flag}`)
 	return value

@@ -4,8 +4,8 @@
  * with a hash that matches the files the install left.
  */
 
-/** One installed Skill's record: where it came from, which commit, and what its folder hashes to. */
-export type LockEntry = {
+/** One [Skill Pin](../GLOSSARY.md): an installed Skill's source, commit and folder hash. */
+export type SkillPin = {
 	source?: string
 	ref?: string
 	commit?: string
@@ -14,8 +14,8 @@ export type LockEntry = {
 	computedHash?: string
 }
 
-/** The lock a scratch project holds after installing the published set. */
-export type SkillsLock = { version?: number; skills?: Record<string, LockEntry> }
+/** `skills-lock.json`: every Skill Pin a scratch project holds after installing the published set. */
+export type SkillsLock = { version?: number; skills?: Record<string, SkillPin> }
 
 /** The lock as written, refusing anything that is not an object of entries. */
 export function parseSkillsLock(source: string, path = "skills-lock.json"): SkillsLock {
@@ -55,9 +55,9 @@ export function lockProblems(lock: SkillsLock, expected: LockExpectation): strin
 	return problems
 }
 
-/** One entry, against the source, commit and hash the install was meant to leave. */
+/** One Skill Pin, against the source, commit and hash the install was meant to leave. */
 function entryProblems(
-	entry: LockEntry | undefined,
+	entry: SkillPin | undefined,
 	name: string,
 	expected: LockExpectation,
 ): string[] {

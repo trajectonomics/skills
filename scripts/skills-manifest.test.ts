@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test"
 import { cliFloor, cliVersionFloor } from "./cli-range"
-import { CLI_VERSION_FLOOR } from "./cli-version-floor"
+import { CLI_VERSION_FLOOR } from "./manifest-floor"
 import { metadataCli, withMetadataCli } from "./skill-metadata"
 import {
 	FORMAT_VERSION,
@@ -11,10 +11,10 @@ import {
 } from "./skills-manifest"
 import {
 	manifest,
+	ONBOARDING_SKILL_PATH,
 	OPERATING_SKILL_PATH,
 	PUBLISHED_SKILLS,
 	read,
-	SKILL_PATH,
 	skillDirectories,
 } from "./skills-test-support"
 
@@ -115,7 +115,7 @@ describe("the frontmatter copy of a range", () => {
 	})
 
 	it("is what the generator writes, so a drifted copy is one command from correct", () => {
-		for (const path of [SKILL_PATH, OPERATING_SKILL_PATH]) {
+		for (const path of [ONBOARDING_SKILL_PATH, OPERATING_SKILL_PATH]) {
 			const source = read(path)
 			expect(withMetadataCli(source, ">=9.9.9 <10.0.0")).not.toBe(source)
 			expect(metadataCli(withMetadataCli(source, ">=9.9.9 <10.0.0"))).toBe(">=9.9.9 <10.0.0")

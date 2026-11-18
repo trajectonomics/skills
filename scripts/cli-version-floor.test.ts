@@ -1,18 +1,15 @@
 import { describe, expect, it } from "bun:test"
-import {
-	CLI_VERSION_FLOOR,
-	CLI_VERSION_FLOOR_PREFIX,
-	statedCliVersionFloor,
-} from "./cli-version-floor"
+import { CLI_VERSION_FLOOR_PREFIX, statedCliVersionFloor } from "./cli-version-floor"
+import { CLI_VERSION_FLOOR } from "./manifest-floor"
 import {
 	FLOOR_LINE,
+	ONBOARDING_SKILL_PATH,
 	OPERATING_SKILL_PATH,
 	read,
-	SKILL_PATH,
 	withoutFloorLine,
 } from "./skills-test-support"
 
-const skill = read(SKILL_PATH)
+const skill = read(ONBOARDING_SKILL_PATH)
 /** The sentence both rules that end setup must count. */
 const DISCLOSURE_COUNTED = "a below-floor command line has been disclosed"
 

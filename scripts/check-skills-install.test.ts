@@ -1,20 +1,14 @@
 import { describe, expect, it } from "bun:test"
-import { readdirSync } from "node:fs"
-import { join } from "node:path"
+import { CLI_VERSION_FLOOR_PREFIX } from "./cli-version-floor"
+import { CLI_VERSION_FLOOR } from "./manifest-floor"
 import {
-	CLI_VERSION_FLOOR,
-	CLI_VERSION_FLOOR_PREFIX,
-	statedCliVersionFloor,
-} from "./cli-version-floor"
-import {
-	INSTALL_CHECK,
+	manifest,
+	ONBOARDING_SKILL_PATH,
 	OPERATING_SKILL_PATH,
 	PINNED_COMMIT,
 	PUBLISHED_SKILLS,
 	read,
-	repoRoot,
 	runInstallCheck,
-	SKILL_PATH,
 	SKILL_VERSION,
 	withoutFloorLine,
 } from "./skills-test-support"
@@ -23,9 +17,6 @@ import {
 const PINNED = new RegExp(`add \\S+@${PINNED_COMMIT} --skill`)
 /** `skills@1.9.0` records the source commit; 1.7.6 did not. */
 const SKILLS_CLI = "skills@1.9.0"
-/** `engines.node` of the skills CLI this repository pins; the README states it for visitors. */
-const SKILLS_CLI_NODE_FLOOR = "22.20"
-
 /** A run that left no scratch directory behind: the check cleans up what it makes. */
 function leftovers(cacheLeftovers: readonly string[]): string[] {
 	return cacheLeftovers.filter((entry) => entry.startsWith("skills-install."))
@@ -50,6 +41,29 @@ describe("the install check", () => {
 		expect(ghCalls[1]).toContain(
 			`repos/trajectonomics/skills/contents/skills.manifest.json?ref=${PINNED_COMMIT}`,
 		)
+	})
+
+	it("compares against the manifest at that commit, not the one in this checkout", () => {
+		const widened = JSON.stringify({
+			formatVersion: 1,
+			skills: [
+				...manifest.skills,
+				{ name: "traj-extra", path: "skills/traj-extra", cliRange: ">=0.2.0 <0.3.0" },
+			],
+		})
+		const { exitCode, output } = runInstallCheck({ source: "repo", manifest: widened })
+		expect(exitCode).not.toBe(0)
+		expect(output).toContain("the manifest lists 3")
+	})
+
+	it("refuses a source that does not resolve the commit it was given", () => {
+		const { exitCode, output } = runInstallCheck({
+			source: "repo",
+			resolvedCommit: "0".repeat(40),
+		})
+		expect(exitCode).not.toBe(0)
+		expect(output).toContain("does not resolve")
+		expect(output).toContain("to that commit")
 	})
 
 	it("prints the commit it installed", () => {
@@ -99,7 +113,7 @@ describe("the install check", () => {
 		)
 	})
 
-	it("fails a lock entry whose commit is not the one installed", () => {
+	it("fails a Skill Pin whose commit is not the one installed", () => {
 		const { exitCode, output } = runInstallCheck({
 			source: "repo",
 			lockOverrides: { traj: { commit: "0".repeat(40) } },
@@ -108,7 +122,7 @@ describe("the install check", () => {
 		expect(output).toContain(`"traj" records commit "${"0".repeat(40)}"`)
 	})
 
-	it("fails a lock entry whose hash the installed files do not produce", () => {
+	it("fails a Skill Pin whose hash the installed files do not produce", () => {
 		const { exitCode, output } = runInstallCheck({
 			source: "repo",
 			lockOverrides: { traj: { computedHash: "b".repeat(64) } },
@@ -132,22 +146,24 @@ describe("the install check", () => {
 	})
 
 	it("fails when the installed SKILL.md loses the release version the Site announces", () => {
-		const skill = read(SKILL_PATH).replace(`  version: "${SKILL_VERSION}"\n`, "")
-		expect(skill).not.toBe(read(SKILL_PATH))
-		const { exitCode, output } = runInstallCheck({ skill })
+		const skill = read(ONBOARDING_SKILL_PATH).replace(`  version: "${SKILL_VERSION}"\n`, "")
+		expect(skill).not.toBe(read(ONBOARDING_SKILL_PATH))
+		const { exitCode, output } = runInstallCheck({ onboardingSkill: skill })
 		expect(exitCode).not.toBe(0)
 		expect(output).toContain("metadata.version")
 		expect(output).toContain(`expected ${SKILL_VERSION}`)
 	})
 
 	it("fails when the installed onboarding copy drops or restates the floor sentence", () => {
-		const dropped = runInstallCheck({ skill: withoutFloorLine(read(SKILL_PATH)) })
+		const dropped = runInstallCheck({
+			onboardingSkill: withoutFloorLine(read(ONBOARDING_SKILL_PATH)),
+		})
 		expect(dropped.exitCode).not.toBe(0)
 		expect(dropped.output).toContain("CLI version floor ''")
 		expect(dropped.output).toContain(`expected ${CLI_VERSION_FLOOR}`)
 
 		const restated = runInstallCheck({
-			skill: read(SKILL_PATH).replace(
+			onboardingSkill: read(ONBOARDING_SKILL_PATH).replace(
 				`${CLI_VERSION_FLOOR_PREFIX}\`${CLI_VERSION_FLOOR}\``,
 				`${CLI_VERSION_FLOOR_PREFIX}\`0.3.0\``,
 			),
@@ -175,37 +191,5 @@ describe("the install check", () => {
 		const { exitCode, output } = runInstallCheck({ operatingSkill })
 		expect(exitCode).not.toBe(0)
 		expect(output).toContain("does not contain 'traj schema --json'")
-	})
-})
-
-describe("the install check's own pins", () => {
-	it("states the Skill's version once, in the check that the install keeps it", () => {
-		expect(read(INSTALL_CHECK)).toContain(`SKILL_VERSION="${SKILL_VERSION}"`)
-	})
-
-	it("reads the CLI Version Floor from the manifest, never restating the number", () => {
-		const check = read(INSTALL_CHECK)
-		expect(check).toContain("--floor")
-		expect(check).not.toContain(`CLI_VERSION_FLOOR="${CLI_VERSION_FLOOR}"`)
-		expect(statedCliVersionFloor(read(SKILL_PATH))).toBe(CLI_VERSION_FLOOR)
-	})
-
-	it("pins skills@1.9.0, the release that records the source commit", () => {
-		expect(read(INSTALL_CHECK)).toContain(`SKILLS_CLI="${SKILLS_CLI}"`)
-		expect(read("README.md")).toContain(SKILLS_CLI)
-		expect(read("README.md")).toContain(SKILLS_CLI_NODE_FLOOR)
-	})
-
-	it("bounds each download and keeps its scratch out of a shared tmpfs", () => {
-		const script = read(INSTALL_CHECK)
-		expect(script).toMatch(/command -v timeout/)
-		expect(script).toMatch(/command -v gtimeout/)
-		expect(script).not.toContain("/tmp")
-		const pkg: { scripts: Record<string, string> } = JSON.parse(read("package.json"))
-		expect(pkg.scripts["check"] ?? "").not.toContain("check-skills-install")
-	})
-
-	it("publishes exactly the directories under skills/", () => {
-		expect(readdirSync(join(repoRoot, "skills")).sort()).toEqual([...PUBLISHED_SKILLS].sort())
 	})
 })

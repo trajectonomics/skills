@@ -1,13 +1,14 @@
 import { chmodSync, mkdirSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
 import {
+	ONBOARDING_SKILL_PATH,
 	OPERATING_SKILL_PATH,
 	PINNED_COMMIT,
 	PUBLISHED_SKILLS,
 	read,
 	repoRoot,
-	SKILL_PATH,
 } from "./skills-files"
+import type { SkillPin } from "./skills-lock"
 import { MANIFEST_PATH } from "./skills-manifest"
 import { stubList } from "./stub-npx"
 
@@ -15,17 +16,19 @@ import { stubList } from "./stub-npx"
 export type InstallCheckFixture = {
 	/** `local` runs the check against this checkout; `repo` names a repository and a commit. */
 	source?: "local" | "repo"
-	skill?: string
+	onboardingSkill?: string
 	/** `null` installs the operating Skill's directory with no `SKILL.md`, the way a dead install looks. */
 	operatingSkill?: string | null
 	/** The Skills the source reports publishing, which is what `--list` prints. */
 	publishedSkills?: readonly string[]
 	/** The manifest the source publishes, which a repository-source run reads at its commit. */
 	manifest?: string
-	/** Per-Skill lock fields a fixture replaces, as the CLI would have written them. */
-	lockOverrides?: Record<string, Record<string, unknown>>
+	/** Per-Skill [Skill Pin](../GLOSSARY.md) fields a fixture replaces, as the CLI would have written them. */
+	lockOverrides?: Record<string, Partial<SkillPin>>
 	/** A Skill installed beside the published set that the manifest omits. */
 	extraSkill?: string
+	/** The commit the stubbed `gh` resolves, when it is not the one the check asked for. */
+	resolvedCommit?: string
 	/** Leaves an `agent/` skills tree in the project, the name Eve's tree uses. */
 	agentDir?: boolean
 	/** The argument to pass the check instead, for the sources it must refuse. */
@@ -69,13 +72,14 @@ export function prepareSandbox(sandbox: string, fixture: InstallCheckFixture): C
 	launch(sandbox, "gh", "stub-gh")
 	if (fixture.extraSkill !== undefined) env.STUB_EXTRA_SKILL = fixture.extraSkill
 	if (fixture.agentDir) env.STUB_AGENT_DIR = "1"
+	if (fixture.resolvedCommit !== undefined) env.STUB_GIT_SHA = fixture.resolvedCommit
 	return { env, args: sourceArgs(fixture) }
 }
 
 /** The two Skills a source publishes, each as the fixture's copy of it, or as a dead install. */
 function writeSkills(skills: string, fixture: InstallCheckFixture): void {
 	const copies = [
-		["traj-onboarding", fixture.skill ?? read(SKILL_PATH)],
+		["traj-onboarding", fixture.onboardingSkill ?? read(ONBOARDING_SKILL_PATH)],
 		[
 			"traj",
 			fixture.operatingSkill === undefined ? read(OPERATING_SKILL_PATH) : fixture.operatingSkill,

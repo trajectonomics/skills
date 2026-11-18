@@ -1,12 +1,12 @@
 import { describe, expect, it } from "bun:test"
 import { skillFrontmatter } from "./skill-frontmatter"
-import { read, SKILL_PATH, section } from "./skills-test-support"
+import { ONBOARDING_SKILL_PATH, read, section } from "./skills-test-support"
 
 /**
  * The onboarding the council's release 1 asks for: the two gates before the first download, a set
  * installed from the pinned commit, and the four facts a person is owed before the handover.
  */
-const body = skillFrontmatter(read(SKILL_PATH), SKILL_PATH).body
+const body = skillFrontmatter(read(ONBOARDING_SKILL_PATH), ONBOARDING_SKILL_PATH).body
 
 describe("the gates before the first download", () => {
 	const gates = section(body, "Before anything downloads")
@@ -81,7 +81,7 @@ describe("what setup leaves behind", () => {
 		expect(body).not.toContain("nothing leaves your machine")
 	})
 
-	it("warns never to rm -rf the data directory, once, with the reason", () => {
+	it("warns never to rm -rf the directory that holds the ledger, once, with the reason", () => {
 		expect(leaves).toContain("Never `rm -rf ~/.traj`")
 		expect(leaves).toContain("destroys every row")
 		expect(body.split("rm -rf ~/.traj")).toHaveLength(2)

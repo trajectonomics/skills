@@ -1,13 +1,18 @@
 import { describe, expect, it } from "bun:test"
 import { skillFrontmatter } from "./skill-frontmatter"
-import { codeSpans, read, SKILL_PATH, SKILL_VERSION, section } from "./skills-test-support"
+import {
+	codeSpans,
+	ONBOARDING_SKILL_PATH,
+	read,
+	SKILL_VERSION,
+	section,
+	WEBSITE_COMMAND,
+} from "./skills-test-support"
 
 /**
  * Static checks on the first-party onboarding Skill the website installs. The networked check that
  * runs the install has its own file, `check-skills-install.test.ts`.
  */
-/** The one install command the Site prints, which this skill has to name exactly. */
-const WEBSITE_COMMAND = "npx skills add trajectonomics/skills --skill traj-onboarding"
 const CLI_REPOSITORY = "https://github.com/trajectonomics/cli"
 const CLI_PACKAGE = "@trajectonomics/cli"
 /**
@@ -18,7 +23,10 @@ const CLI_PACKAGE = "@trajectonomics/cli"
 const LEDGER_FILE = `\${TRAJ_HOME:-~/.traj}/traj.db`
 
 describe("the traj-onboarding Skill", () => {
-	const { fields, block, body } = skillFrontmatter(read(SKILL_PATH), SKILL_PATH)
+	const { fields, block, body } = skillFrontmatter(
+		read(ONBOARDING_SKILL_PATH),
+		ONBOARDING_SKILL_PATH,
+	)
 
 	it("is named traj-onboarding and fires on getting started with someone's money", () => {
 		expect(fields.get("name")).toBe("traj-onboarding")

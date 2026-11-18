@@ -1,7 +1,8 @@
 /**
  * The stand-in for `gh` that the install-check tests run, so the check's reading of the source at a
- * pinned commit is proved without a network: it answers a commit lookup with the commit the fixture
- * names, and the manifest lookup with the manifest the fixture publishes at that commit.
+ * pinned commit is proved without a network: it answers a commit lookup with the commit it was asked
+ * for (or a fixture's different one, which the check must refuse), and the manifest lookup with the
+ * manifest the fixture publishes at that commit.
  */
 import { appendFileSync, readFileSync } from "node:fs"
 
@@ -22,7 +23,8 @@ export function stubMain(): void {
 		return
 	}
 	if (path.includes("/commits/")) {
-		process.stdout.write(`${required("STUB_GIT_SHA")}\n`)
+		const asked = path.slice(path.indexOf("/commits/") + "/commits/".length).split("?")[0] ?? ""
+		process.stdout.write(`${process.env["STUB_GIT_SHA"] ?? asked}\n`)
 		return
 	}
 	throw new Error(`stub gh: nothing to answer: ${args.join(" ")}`)

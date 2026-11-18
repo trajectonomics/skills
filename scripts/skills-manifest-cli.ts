@@ -2,7 +2,7 @@
  * The [Skill Manifest](../GLOSSARY.md) as the shell checks read it: one `name<TAB>path<TAB>range`
  * line per row, in install order, and the derived [CLI Version Floor](../GLOSSARY.md).
  *
- *   bun scripts/skills-manifest-cli.ts <manifest> [--floor | --names]
+ *   bun scripts/skills-manifest-cli.ts <manifest> [--floor]
  */
 import { readFileSync } from "node:fs"
 import { cliVersionFloor } from "./cli-range"
@@ -14,5 +14,4 @@ if (path === undefined) {
 }
 const manifest = parseSkillManifest(readFileSync(path, "utf8"), path)
 if (mode === "--floor") console.log(cliVersionFloor(manifest.skills))
-else if (mode === "--names") for (const row of manifest.skills) console.log(row.name)
 else for (const row of manifest.skills) console.log(`${row.name}\t${row.path}\t${row.cliRange}`)

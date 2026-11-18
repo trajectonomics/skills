@@ -1,8 +1,5 @@
 import { describe, expect, it } from "bun:test"
-import { read } from "./skills-test-support"
-
-/** The one install command the Site prints, and the only one the README may lead with. */
-export const WEBSITE_COMMAND = "npx skills add trajectonomics/skills --skill traj-onboarding"
+import { read, WEBSITE_COMMAND } from "./skills-test-support"
 
 /** `engines.node` of the command line the Skill installs. */
 const CLI_NODE_FLOOR = "Node 20"
@@ -38,13 +35,12 @@ describe("the README the website links to", () => {
 	})
 
 	it("gives a person who can only paste one block to hand their agent", () => {
-		const block = readme
-			.split("\n")
-			.filter((line) => line.startsWith("> "))
-			.join(" ")
+		const lines = readme.split("\n").filter((line) => line.startsWith("> "))
+		const block = lines.join(" ")
 		expect(block).toContain(`${WEBSITE_COMMAND} -y`)
 		expect(block).toContain("read the `traj-onboarding` skill and follow it")
-		expect(readme.indexOf(block.split(" ")[0] ?? "")).toBeLessThan(readme.indexOf("## Development"))
+		const developmentAt = readme.indexOf("## Development")
+		for (const line of lines) expect(readme.indexOf(line)).toBeLessThan(developmentAt)
 	})
 
 	it("names the no-shell limit of that block, rather than hiding it", () => {

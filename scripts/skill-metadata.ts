@@ -3,6 +3,7 @@
  * [Skill Manifest](../GLOSSARY.md) by `scripts/sync-skills-manifest.ts` and checked by
  * `scripts/skills-manifest.test.ts`, never authored in the Skill itself.
  */
+import type { SkillManifest } from "./skills-manifest"
 
 /** The metadata key the range is copied into. */
 const CLI = "cli"
@@ -46,4 +47,17 @@ function metadataChildren(lines: readonly string[]): string[] {
 		children.push(line)
 	}
 	return children
+}
+
+/** The Skill sources a manifest implies, and whether each differs from what is on disk. */
+export function frontmatterWrites(
+	manifest: SkillManifest,
+	readSkill: (path: string) => string,
+): { path: string; source: string; changed: boolean }[] {
+	return manifest.skills.map((row) => {
+		const path = `${row.path}/SKILL.md`
+		const current = readSkill(path)
+		const source = withMetadataCli(current, row.cliRange)
+		return { path, source, changed: source !== current }
+	})
 }

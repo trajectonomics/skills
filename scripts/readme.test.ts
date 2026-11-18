@@ -36,4 +36,19 @@ describe("the README the website links to", () => {
 		expect(privatePackage).toBeGreaterThan(-1)
 		expect(website).toBeLessThan(privatePackage)
 	})
+
+	it("gives a person who can only paste one block to hand their agent", () => {
+		const block = readme
+			.split("\n")
+			.filter((line) => line.startsWith("> "))
+			.join(" ")
+		expect(block).toContain(`${WEBSITE_COMMAND} -y`)
+		expect(block).toContain("read the `traj-onboarding` skill and follow it")
+		expect(readme.indexOf(block.split(" ")[0] ?? "")).toBeLessThan(readme.indexOf("## Development"))
+	})
+
+	it("names the no-shell limit of that block, rather than hiding it", () => {
+		expect(readme).toContain("If you cannot run shell commands")
+		expect(readme).toContain("give me the command above to run myself")
+	})
 })

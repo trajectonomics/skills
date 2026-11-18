@@ -51,3 +51,16 @@ export function withoutFloorLine(skillSource: string): string {
 	if (kept.length === lines.length) throw new Error(`no '${CLI_VERSION_FLOOR_PREFIX}' line`)
 	return kept.join("\n")
 }
+
+/** The prose under one `## ` heading, line breaks flattened so a test quotes a sentence. */
+export function section(skillSource: string, heading: string): string {
+	const start = skillSource.indexOf(`## ${heading}`)
+	if (start < 0) throw new Error(`the Skill has no "${heading}" section`)
+	const next = skillSource.indexOf("\n## ", start + 1)
+	return skillSource.slice(start, next < 0 ? skillSource.length : next).replace(/\s+/g, " ")
+}
+
+/** Every inline code span in a Skill, which is where a command a reader may run is named. */
+export function codeSpans(skillSource: string): string[] {
+	return [...skillSource.matchAll(/`([^`\n]+)`/g)].map((match) => match[1] ?? "")
+}

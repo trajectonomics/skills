@@ -1,12 +1,13 @@
 import { describe, expect, it } from "bun:test"
 import { skillFrontmatter } from "./skill-frontmatter"
-import { read, SKILL_PATH, SKILL_VERSION } from "./skills-test-support"
+import { codeSpans, read, SKILL_PATH, SKILL_VERSION, section } from "./skills-test-support"
 
 /**
  * Static checks on the first-party onboarding Skill the website installs. The networked check that
  * runs the install has its own file, `check-skills-install.test.ts`.
  */
-const OPERATING_SKILL_COMMAND = "npx skills add trajectonomics/skills --skill traj"
+/** The one install command the Site prints, which this skill has to name exactly. */
+const WEBSITE_COMMAND = "npx skills add trajectonomics/skills --skill traj-onboarding"
 const CLI_REPOSITORY = "https://github.com/trajectonomics/cli"
 const CLI_PACKAGE = "@trajectonomics/cli"
 /**
@@ -15,19 +16,6 @@ const CLI_PACKAGE = "@trajectonomics/cli"
  * escaped because it is part of the path, not a placeholder in this file.
  */
 const LEDGER_FILE = `\${TRAJ_HOME:-~/.traj}/traj.db`
-
-/** The prose under one `## ` heading, line breaks flattened so a test quotes a sentence. */
-function section(skillSource: string, heading: string): string {
-	const start = skillSource.indexOf(`## ${heading}`)
-	if (start < 0) throw new Error(`the Skill has no "${heading}" section`)
-	const next = skillSource.indexOf("\n## ", start + 1)
-	return skillSource.slice(start, next < 0 ? skillSource.length : next).replace(/\s+/g, " ")
-}
-
-/** Every inline code span in a Skill, which is where a command a reader may run is named. */
-function codeSpans(skillSource: string): string[] {
-	return [...skillSource.matchAll(/`([^`\n]+)`/g)].map((match) => match[1] ?? "")
-}
 
 describe("the traj-onboarding Skill", () => {
 	const { fields, block, body } = skillFrontmatter(read(SKILL_PATH), SKILL_PATH)
@@ -57,10 +45,24 @@ describe("the traj-onboarding Skill", () => {
 		expect(description).toContain("already has a ledger")
 	})
 
-	it("installs the operating Skill from this repository in this Skill's own scope", () => {
-		expect(body).toContain(OPERATING_SKILL_COMMAND)
+	it("names one install command, the one the Site prints, with -y stated once", () => {
+		const installLines = body
+			.split("\n")
+			.filter((line) => line.trim().startsWith("npx skills add trajectonomics/skills --skill"))
+		expect(installLines).toEqual([WEBSITE_COMMAND])
+		expect(body.split("an unattended run appends `-y`")).toHaveLength(2)
+	})
+
+	it("installs the published set from the commit the lock records, in this Skill's own scope", () => {
+		const stepTwo = section(body, "Step 2: Install the skill that operates `traj`")
+		expect(stepTwo).toContain("skills-lock.json")
+		expect(stepTwo).toContain("Never install from `main`")
+		expect(stepTwo).toContain("skills.manifest.json")
+		expect(stepTwo).toContain("npx skills add trajectonomics/skills@<commit> --skill <name>")
+		expect(stepTwo).toContain("add `-g` when the project list did not name `traj-onboarding`")
+		expect(stepTwo).toContain("Skip a row whose CLI Range the command line does not satisfy")
+		expect(stepTwo).toContain("install `traj` alone from the pin")
 		expect(body).toContain("skills list --json")
-		expect(body).toContain("add `-g` when the project list did not name `traj-onboarding`")
 		expect(body).not.toContain("internal-skills")
 	})
 

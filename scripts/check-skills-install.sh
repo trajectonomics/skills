@@ -208,7 +208,9 @@ installed_floor="$(
 	fail "the installed $ONBOARDING_SKILL/SKILL.md states the CLI version floor '${installed_floor}', expected $FLOOR from the Skill Manifest (the operating Skill it installs assumes that release)"
 
 echo "Installing every manifest Skill by explicit --skill, in manifest order..."
-while IFS=$'\t' read -r name path range; do
+# fd 3, not stdin: the skills CLI reads its own stdin and would drain the loop's input, which used to
+# stop the loop after the first row as soon as the manifest carried more than one non-onboarding row.
+while IFS=$'\t' read -r -u 3 name path range; do
 	[ -n "$name" ] || continue
 	# The website command above already installed this one, from the same commit and with the same
 	# flags the manifest row asks for.
@@ -221,7 +223,7 @@ while IFS=$'\t' read -r name path range; do
 		cat "$SCRATCH/add-set.log" >&2
 		fail "skills add --skill $name exited non-zero"
 	}
-done <<<"$ROWS"
+done 3<<<"$ROWS"
 
 # Step 2 adds Skills and disturbs none: the project ends setup holding the published set, in both
 # agent trees, and nothing the manifest does not list.

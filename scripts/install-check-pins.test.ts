@@ -37,6 +37,12 @@ describe("the install check's own pins", () => {
 		expect(read("README.md")).toContain(SKILLS_CLI_NODE_FLOOR)
 	})
 
+	it("reads the manifest rows on fd 3, so an install cannot drain the loop's input", () => {
+		const script = read(INSTALL_CHECK)
+		expect(script).toContain("read -r -u 3 name path range")
+		expect(script).toContain('done 3<<<"$ROWS"')
+	})
+
 	it("bounds each download and keeps its scratch out of a shared tmpfs", () => {
 		const script = read(INSTALL_CHECK)
 		expect(script).toMatch(/command -v timeout/)

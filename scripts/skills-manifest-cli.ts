@@ -10,7 +10,7 @@ import { parseSkillManifest } from "./skills-manifest"
 
 const [path, mode] = process.argv.slice(2)
 if (path === undefined) {
-	throw new Error("usage: bun scripts/skills-manifest-cli.ts <manifest> [--floor | --names]")
+	throw new Error("usage: bun scripts/skills-manifest-cli.ts <manifest> [--floor]")
 }
 const manifest = parseSkillManifest(readFileSync(path, "utf8"), path)
 if (mode === "--floor") console.log(cliVersionFloor(manifest.skills))

@@ -22,7 +22,7 @@ _Avoid_: workflow, procedure
 A rule or condition that must hold true across all state transitions in this system.
 
 ### CLI Range
-The npm semver range a published Skill declares it expects of `@trajectonomics/cli`, from the Skill Manifest: copied into the Skill's frontmatter, and stated in the Skill's body where a person reads it. Its lower bound is the CLI Version Floor; its upper bound says when a new CLI minor needs the Skill rechecked. Every published Skill declares `>=0.2.0 <0.3.0` today.
+The npm semver range a published Skill declares it expects of `@trajectonomics/cli`, from the Skill Manifest: copied into the Skill's frontmatter, and stated in the Skill's body only as its CLI Version Floor, because it is authored once and every other place derives from it. Its lower bound is the CLI Version Floor; its upper bound says when a new CLI minor needs the Skill rechecked, and is not a compatibility claim. The lower bound gates an install: a Skill is installed when the command line is at or above its floor, and skipped and named below it. Above its upper bound it is still installed, disclosed instead ([ADR 0004](./docs/adr/0004-the-cli-range-ceiling-is-a-recheck-marker.md)). Every published Skill declares `>=0.2.0 <0.3.0` today.
 _Avoid_: supported versions, min version
 
 ### CLI Version Floor
